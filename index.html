@@ -114,18 +114,18 @@
           <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
             <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {/* Thay thế chữ Tikluycredit bằng Logo hình ảnh */}
+                {/* Logo hình chữ nhật chuẩn tỷ lệ */}
                 <img 
                   src="./Logo Tikluy.jpeg" 
                   alt="Tikluy Logo" 
-                  className="h-10 w-auto rounded-xl object-contain border border-slate-200 shadow-sm"
+                  className="h-9 w-auto object-contain"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "https://via.placeholder.com/120x40?text=Tikluycredit";
                   }}
                 />
                 <div>
-                  <p className="text-xs text-slate-500 font-medium leading-tight">Hệ thống Duyệt Tín Dụng Tự Động</p>
+                  <p className="text-[11px] text-slate-500 font-medium leading-tight">Hệ thống Duyệt Tín Dụng Tự Động</p>
                 </div>
               </div>
 
@@ -527,14 +527,14 @@
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center space-y-5 shadow-[0_15px_35px_rgba(0,0,0,0.08)] transform transition-all relative overflow-hidden">
                       <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-500 via-rose-500 to-red-600"></div>
 
-                      {/* Logo Tikluy đính kèm ở thẻ thông báo */}
+                      {/* Logo chuẩn chữ nhật ở thẻ thông báo */}
                       <img 
                         src="./Logo Tikluy.jpeg" 
                         alt="Tikluy Logo" 
-                        className="w-16 h-16 rounded-2xl object-cover mx-auto border border-red-200 shadow-md"
+                        className="h-12 w-auto object-contain mx-auto"
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = "https://via.placeholder.com/64?text=TK";
+                          e.target.src = "https://via.placeholder.com/120x40?text=Tikluy";
                         }}
                       />
                       
@@ -559,7 +559,7 @@
                         </div>
                       </div>
 
-                      {/* Nút tải app sử dụng ảnh hình nút thực tế */}
+                      {/* Nút tải app căn chỉnh đều nhau, kích thước vừa vặn chuẩn thiết kế */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                         <a 
                           href="https://apps.apple.com/vn/app/tikluy/id6504506939" 
@@ -569,10 +569,10 @@
                           <img 
                             src="./Download ios.jpeg" 
                             alt="Tải về trên App Store" 
-                            className="w-full h-auto rounded-xl shadow-md border border-slate-200"
+                            className="w-full h-12 object-cover rounded-xl shadow-xs border border-slate-200"
                             onError={(e) => {
                               e.target.onerror = null;
-                              e.target.src = "https://via.placeholder.com/200x50?text=App+Store";
+                              e.target.src = "https://via.placeholder.com/200x48?text=App+Store";
                             }}
                           />
                         </a>
@@ -585,10 +585,10 @@
                           <img 
                             src="./Download ADR.jpeg" 
                             alt="Tải về trên Google Play" 
-                            className="w-full h-auto rounded-xl shadow-md border border-slate-200"
+                            className="w-full h-12 object-cover rounded-xl shadow-xs border border-slate-200"
                             onError={(e) => {
                               e.target.onerror = null;
-                              e.target.src = "https://via.placeholder.com/200x50?text=Google+Play";
+                              e.target.src = "https://via.placeholder.com/200x48?text=Google+Play";
                             }}
                           />
                         </a>
