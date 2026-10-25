@@ -113,15 +113,19 @@
           {/* Header */}
           <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
             <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center font-bold text-white text-xl shadow-md shadow-red-600/20">
-                  TK
-                </div>
+              <div className="flex items-center gap-3">
+                {/* Thay thế chữ Tikluycredit bằng Logo hình ảnh */}
+                <img 
+                  src="./Logo Tikluy.jpeg" 
+                  alt="Tikluy Logo" 
+                  className="h-10 w-auto rounded-xl object-contain border border-slate-200 shadow-sm"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/120x40?text=Tikluycredit";
+                  }}
+                />
                 <div>
-                  <h1 className="font-extrabold text-lg leading-tight tracking-wide bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
-                    Tikluycredit
-                  </h1>
-                  <p className="text-xs text-slate-500">Hệ thống Duyệt Tín Dụng Tự Động</p>
+                  <p className="text-xs text-slate-500 font-medium leading-tight">Hệ thống Duyệt Tín Dụng Tự Động</p>
                 </div>
               </div>
 
@@ -135,11 +139,8 @@
           <main className="max-w-4xl mx-auto px-4 pt-6">
             <div className="space-y-6">
               
-              {/* Banner giới thiệu ngắn gọn */}
+              {/* Banner giới thiệu */}
               <div className="bg-gradient-to-br from-red-50 via-white to-rose-50 border border-red-200 rounded-2xl p-5 shadow-sm relative overflow-hidden">
-                <div className="flex items-center gap-2 text-red-600 text-xs font-bold uppercase tracking-wider mb-2">
-                  <i data-lucide="zap" className="w-4 h-4"></i> Tikluy AI Engine
-                </div>
                 <h2 className="text-xl font-bold text-slate-900 mb-2">
                   Đăng Ký Hạn Mức Vay Nhanh Từ 30 - 100 Triệu VNĐ
                 </h2>
@@ -520,16 +521,22 @@
                   </div>
                 )}
 
-                {/* STEP 4 - THẺ 3D SANG TRỌNG & RÕ RÀNG */}
+                {/* STEP 4 */}
                 {currentStep === 4 && approvalResult && (
                   <div className="py-2">
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center space-y-5 shadow-[0_15px_35px_rgba(0,0,0,0.08)] transform transition-all relative overflow-hidden">
-                      {/* Viền sáng phía trên thẻ */}
                       <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-500 via-rose-500 to-red-600"></div>
 
-                      <div className="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto border border-red-200 shadow-inner">
-                        <i data-lucide="smartphone" className="w-8 h-8"></i>
-                      </div>
+                      {/* Logo Tikluy đính kèm ở thẻ thông báo */}
+                      <img 
+                        src="./Logo Tikluy.jpeg" 
+                        alt="Tikluy Logo" 
+                        className="w-16 h-16 rounded-2xl object-cover mx-auto border border-red-200 shadow-md"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://via.placeholder.com/64?text=TK";
+                        }}
+                      />
                       
                       <div>
                         <span className="text-[11px] uppercase tracking-widest text-red-600 font-bold bg-red-50 px-3 py-1 rounded-full border border-red-100">
@@ -544,7 +551,7 @@
                         Hồ sơ đề xuất vay của Quý khách (<strong className="text-red-600 font-bold">{formatVND(approvalResult.amount)}</strong>) đã được ghi nhận trên hệ thống. Để tiếp tục quy trình xét duyệt và giải ngân tự động, xin vui lòng cài đặt ứng dụng <strong className="text-slate-900 font-bold">Tikluy</strong>, tiến hành <strong className="text-slate-900 font-bold">nhập lại thông tin</strong> và sử dụng mã giới thiệu bên dưới.
                       </p>
 
-                      {/* Khung mã giới thiệu thiết kế 3D nổi khối sang trọng, rõ chữ */}
+                      {/* Khung mã giới thiệu */}
                       <div className="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-5 rounded-2xl space-y-2 shadow-xl border border-slate-800">
                         <p className="text-[11px] text-slate-400 uppercase tracking-wider font-medium">Mã giới thiệu nhân viên hỗ trợ:</p>
                         <div className="text-3xl font-black text-red-500 tracking-widest font-mono py-1 drop-shadow">
@@ -552,30 +559,38 @@
                         </div>
                       </div>
 
-                      {/* Nút tải app iOS và Android */}
+                      {/* Nút tải app sử dụng ảnh hình nút thực tế */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                         <a 
                           href="https://apps.apple.com/vn/app/tikluy/id6504506939" 
                           target="_blank" 
-                          className="bg-slate-900 hover:bg-slate-800 text-white p-3.5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-md group"
+                          className="block hover:opacity-90 transition-opacity"
                         >
-                          <i data-lucide="apple" className="w-6 h-6 text-white group-hover:scale-110 transition-transform"></i>
-                          <div className="text-left">
-                            <p className="text-[10px] text-slate-400 uppercase font-medium leading-none">Tải về trên</p>
-                            <p className="text-sm font-bold text-white">App Store (iOS)</p>
-                          </div>
+                          <img 
+                            src="./Download ios.jpeg" 
+                            alt="Tải về trên App Store" 
+                            className="w-full h-auto rounded-xl shadow-md border border-slate-200"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "https://via.placeholder.com/200x50?text=App+Store";
+                            }}
+                          />
                         </a>
 
                         <a 
                           href="https://play.google.com/store/apps/details?id=com.tikluy" 
                           target="_blank" 
-                          className="bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-200 p-3.5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-md group"
+                          className="block hover:opacity-90 transition-opacity"
                         >
-                          <i data-lucide="play" className="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform fill-red-600"></i>
-                          <div className="text-left">
-                            <p className="text-[10px] text-slate-500 uppercase font-medium leading-none">Tải về trên</p>
-                            <p className="text-sm font-bold text-slate-900">Google Play</p>
-                          </div>
+                          <img 
+                            src="./Download ADR.jpeg" 
+                            alt="Tải về trên Google Play" 
+                            className="w-full h-auto rounded-xl shadow-md border border-slate-200"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "https://via.placeholder.com/200x50?text=Google+Play";
+                            }}
+                          />
                         </a>
                       </div>
 
