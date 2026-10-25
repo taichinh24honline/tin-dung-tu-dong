@@ -13,7 +13,7 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen pb-12">
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen pb-12">
   <div id="root"></div>
 
   <script type="text/babel">
@@ -22,11 +22,9 @@
     function App() {
       const [currentStep, setCurrentStep] = useState(1);
       
-      // Loan Calculator State
+      // Loan Amount Selection State
       const [loanAmount, setLoanAmount] = useState(50000000);
       const [loanTerm, setLoanTerm] = useState(12);
-      const [interestRate, setInterestRate] = useState(1.1);
-      const [calcType, setCalcType] = useState('declining');
 
       // Application Form State
       const [formData, setFormData] = useState({
@@ -39,8 +37,9 @@
         monthlyIncome: '15000000',
         companyName: '',
         address: '',
+        bankName: 'MBBank',
         bankAccount: '',
-        bankName: 'MBBank'
+        accountHolder: ''
       });
 
       // Real Photo Upload State
@@ -82,43 +81,6 @@
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
       };
 
-      const calculateRepayment = () => {
-        const P = Number(loanAmount);
-        const N = Number(loanTerm);
-        const monthlyRate = (interestRate / 100);
-
-        if (calcType === 'flat') {
-          const monthlyPrincipal = P / N;
-          const monthlyInterest = P * monthlyRate;
-          const totalMonthly = monthlyPrincipal + monthlyInterest;
-          const totalPayment = totalMonthly * N;
-          return {
-            firstMonth: totalMonthly,
-            totalInterest: monthlyInterest * N,
-            totalPayment
-          };
-        } else {
-          const monthlyPrincipal = P / N;
-          const firstMonthInterest = P * monthlyRate;
-          const firstMonthTotal = monthlyPrincipal + firstMonthInterest;
-          
-          let totalInterest = 0;
-          let remaining = P;
-          for (let i = 0; i < N; i++) {
-            totalInterest += remaining * monthlyRate;
-            remaining -= monthlyPrincipal;
-          }
-
-          return {
-            firstMonth: firstMonthTotal,
-            totalInterest,
-            totalPayment: P + totalInterest
-          };
-        }
-      };
-
-      const calcDetails = calculateRepayment();
-
       const triggerAutoApproval = () => {
         setIsAnalyzing(true);
         setAnalysisProgress(0);
@@ -134,8 +96,7 @@
                 fullName: formData.fullName || 'Khách hàng',
                 amount: Number(loanAmount),
                 term: Number(loanTerm),
-                date: new Date().toISOString().split('T')[0],
-                monthlyPayment: calcDetails.firstMonth
+                date: new Date().toISOString().split('T')[0]
               };
 
               setApprovalResult(resultObj);
@@ -150,547 +111,485 @@
       return (
         <div>
           {/* Header */}
-          <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-red-900/40">
-            <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+          <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+            <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center font-bold text-white text-xl shadow-lg shadow-red-600/30">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center font-bold text-white text-xl shadow-md shadow-red-600/20">
                   TK
                 </div>
                 <div>
-                  <h1 className="font-extrabold text-lg leading-tight tracking-wide bg-gradient-to-r from-red-500 to-rose-300 bg-clip-text text-transparent">
+                  <h1 className="font-extrabold text-lg leading-tight tracking-wide bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
                     Tikluycredit
                   </h1>
-                  <p className="text-xs text-slate-400">Hệ thống Duyệt Tín Dụng Tự Động</p>
+                  <p className="text-xs text-slate-500">Hệ thống Duyệt Tín Dụng Tự Động</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-1.5 bg-red-500/10 border border-red-500/30 px-3 py-1.5 rounded-xl text-xs text-red-400 font-bold">
+              <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 px-3 py-1.5 rounded-xl text-xs text-red-600 font-bold">
                 <i data-lucide="zap" className="w-4 h-4"></i>
                 Hỗ trợ 24/7
               </div>
             </div>
           </header>
 
-          <main className="max-w-6xl mx-auto px-4 pt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <main className="max-w-4xl mx-auto px-4 pt-6">
+            <div className="space-y-6">
               
-              {/* Left Column: Calculator & Highlights */}
-              <div className="lg:col-span-5 space-y-6">
-                <div className="bg-gradient-to-br from-red-950/40 via-slate-900 to-slate-950 border border-red-500/30 rounded-2xl p-5 shadow-xl relative overflow-hidden">
-                  <div className="flex items-center gap-2 text-red-400 text-xs font-bold uppercase tracking-wider mb-2">
-                    <i data-lucide="zap" className="w-4 h-4"></i> Tikluy AI Engine
-                  </div>
-                  <h2 className="text-xl font-bold text-white mb-2">
-                    Hạn Mức Vay Từ 30 - 100 Triệu VNĐ
-                  </h2>
-                  <p className="text-slate-300 text-xs leading-relaxed mb-4">
-                    Thẩm định tự động nhanh chóng. Không thế chấp tài sản, thủ tục trực tuyến minh bạch và an toàn tuyệt đối.
-                  </p>
-
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl">
-                      <i data-lucide="clock" className="w-4 h-4 text-rose-400 mx-auto mb-1"></i>
-                      <p className="text-[10px] text-slate-400">Thời gian xử lý</p>
-                      <p className="text-xs font-bold text-white">15 Phút</p>
-                    </div>
-                    <div className="bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl">
-                      <i data-lucide="shield-check" className="w-4 h-4 text-red-500 mx-auto mb-1"></i>
-                      <p className="text-[10px] text-slate-400">Bảo mật</p>
-                      <p className="text-xs font-bold text-white">Tiêu chuẩn quốc tế</p>
-                    </div>
-                    <div className="bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl">
-                      <i data-lucide="activity" className="w-4 h-4 text-orange-400 mx-auto mb-1"></i>
-                      <p className="text-[10px] text-slate-400">Lãi suất ưu đãi</p>
-                      <p className="text-xs font-bold text-red-400">Từ 1.1%/tháng</p>
-                    </div>
-                  </div>
+              {/* Banner giới thiệu ngắn gọn */}
+              <div className="bg-gradient-to-br from-red-50 via-white to-rose-50 border border-red-200 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+                <div className="flex items-center gap-2 text-red-600 text-xs font-bold uppercase tracking-wider mb-2">
+                  <i data-lucide="zap" className="w-4 h-4"></i> Tikluy AI Engine
                 </div>
-
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-5">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <h3 className="font-bold text-slate-100 flex items-center gap-2 text-sm">
-                      <i data-lucide="calculator" className="w-4 h-4 text-red-500"></i>
-                      Công Cụ Dự Tính Khoản Vay
-                    </h3>
-                    <span className="text-xs px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/30">
-                      Minh bạch thông tin
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-400">Số tiền đề xuất vay</span>
-                      <span className="text-red-400 font-bold text-base">
-                        {formatVND(loanAmount)}
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      min="30000000"
-                      max="100000000"
-                      step="5000000"
-                      value={loanAmount}
-                      onChange={(e) => setLoanAmount(Number(e.target.value))}
-                      className="w-full accent-red-600 h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer"
-                    />
-                    <div className="flex justify-between text-[10px] text-slate-400">
-                      <span>30 Triệu</span>
-                      <span>60 Triệu</span>
-                      <span>100 Triệu</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs text-slate-400 block">Kỳ hạn thanh toán (tháng)</label>
-                    <div className="grid grid-cols-4 gap-2">
-                      {[6, 12, 18, 24].map((term) => (
-                        <button
-                          key={term}
-                          onClick={() => setLoanTerm(term)}
-                          className={`py-2 text-xs font-medium rounded-xl border transition-all ${
-                            loanTerm === term
-                              ? 'bg-red-600 text-white font-bold border-red-500 shadow-md shadow-red-600/30'
-                              : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                          }`}
-                        >
-                          {term} Tháng
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs">
-                    <span className="text-slate-400">Phương thức tính lãi</span>
-                    <div className="flex gap-1 bg-slate-900 p-1 rounded-lg">
-                      <button
-                        onClick={() => setCalcType('declining')}
-                        className={`px-2.5 py-1 rounded-md text-[11px] transition-all ${
-                          calcType === 'declining' ? 'bg-red-600 text-white font-bold' : 'text-slate-400'
-                        }`}
-                      >
-                        Giảm dần
-                      </button>
-                      <button
-                        onClick={() => setCalcType('flat')}
-                        className={`px-2.5 py-1 rounded-md text-[11px] transition-all ${
-                          calcType === 'flat' ? 'bg-red-600 text-white font-bold' : 'text-slate-400'
-                        }`}
-                      >
-                        Cố định
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-2.5">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-400">Gốc và lãi dự kiến tháng đầu:</span>
-                      <span className="font-bold text-white text-sm">
-                        {formatVND(calcDetails.firstMonth)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-400">Tổng tiền lãi phát sinh:</span>
-                      <span className="text-slate-300 font-medium">
-                        {formatVND(calcDetails.totalInterest)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-xs pt-2 border-t border-slate-800/80">
-                      <span className="text-slate-400">Tổng giá trị khoản vay:</span>
-                      <span className="text-red-400 font-bold text-sm">
-                        {formatVND(calcDetails.totalPayment)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                <h2 className="text-xl font-bold text-slate-900 mb-2">
+                  Đăng Ký Hạn Mức Vay Nhanh Từ 30 - 100 Triệu VNĐ
+                </h2>
+                <p className="text-slate-600 text-xs leading-relaxed">
+                  Thẩm định tự động minh bạch. Không thế chấp tài sản, thủ tục trực tuyến an toàn và bảo mật tuyệt đối.
+                </p>
               </div>
 
-              {/* Right Column: Multi-Step Form */}
-              <div className="lg:col-span-7">
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative">
-                  
-                  <div className="mb-6">
-                    <div className="flex justify-between items-center mb-3 text-xs">
-                      <span className="font-semibold text-red-500 uppercase tracking-wider">
-                        Bước {currentStep} / 4: {
-                          currentStep === 1 ? 'Thông tin cá nhân & CCCD' :
-                          currentStep === 2 ? 'Thông tin việc làm & Giải ngân' :
-                          currentStep === 3 ? 'Xác thực hồ sơ trực tuyến' : 'Hoàn tất hồ sơ'
-                        }
-                      </span>
-                      <span className="text-slate-400 font-medium">{currentStep * 25}% Hoàn thành</span>
-                    </div>
-                    <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                      <div 
-                        className="bg-gradient-to-r from-red-600 to-rose-500 h-full transition-all duration-300"
-                        style={{ width: `${currentStep * 25}%` }}
-                      ></div>
-                    </div>
+              {/* Main Multi-Step Form Card */}
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-md relative">
+                
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-3 text-xs">
+                    <span className="font-semibold text-red-600 uppercase tracking-wider">
+                      Bước {currentStep} / 4: {
+                        currentStep === 1 ? 'Chọn hạn mức & Thông tin cá nhân' :
+                        currentStep === 2 ? 'Việc làm & Tài khoản thụ hưởng' :
+                        currentStep === 3 ? 'Xác thực định danh trực tuyến (eKYC)' : 'Hoàn tất hồ sơ'
+                      }
+                    </span>
+                    <span className="text-slate-500 font-medium">{currentStep * 25}% Hoàn thành</span>
                   </div>
+                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-red-600 to-rose-500 h-full transition-all duration-300"
+                      style={{ width: `${currentStep * 25}%` }}
+                    ></div>
+                  </div>
+                </div>
 
-                  {/* STEP 1 */}
-                  {currentStep === 1 && (
-                    <div className="space-y-4">
-                      <h3 className="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="user" className="w-4 h-4 text-red-500"></i> Thông Tin Định Danh Khách Hàng
-                      </h3>
+                {/* STEP 1 */}
+                {currentStep === 1 && (
+                  <div className="space-y-5">
+                    <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
+                      <i data-lucide="wallet" className="w-4 h-4 text-red-600"></i> Lựa Chọn Hạn Mức & Thông Tin Định Danh
+                    </h3>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-xs text-slate-300 mb-1 block font-medium">Họ và Tên (Khớp CCCD)</label>
-                          <input
-                            type="text"
-                            name="fullName"
-                            placeholder="NGUYEN VAN A"
-                            value={formData.fullName}
-                            onChange={handleInputChange}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-600"
-                          />
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-slate-600">Số tiền đề xuất vay:</span>
+                          <span className="text-red-600 font-bold text-base">
+                            {formatVND(loanAmount)}
+                          </span>
                         </div>
-
-                        <div>
-                          <label className="text-xs text-slate-300 mb-1 block font-medium">Số CCCD (12 chữ số)</label>
-                          <input
-                            type="text"
-                            name="idCard"
-                            placeholder="038090001234"
-                            maxLength={12}
-                            value={formData.idCard}
-                            onChange={handleInputChange}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-600"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-xs text-slate-300 mb-1 block font-medium">Số Điện Thoại Chính Chủ</label>
-                          <input
-                            type="tel"
-                            name="phone"
-                            placeholder="0987654321"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-600"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-xs text-slate-300 mb-1 block font-medium">Địa chỉ Email</label>
-                          <input
-                            type="email"
-                            name="email"
-                            placeholder="nguyenvana@gmail.com"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-600"
-                          />
+                        <input
+                          type="range"
+                          min="30000000"
+                          max="100000000"
+                          step="5000000"
+                          value={loanAmount}
+                          onChange={(e) => setLoanAmount(Number(e.target.value))}
+                          className="w-full accent-red-600 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                        />
+                        <div className="flex justify-between text-[10px] text-slate-500">
+                          <span>30 Triệu</span>
+                          <span>60 Triệu</span>
+                          <span>100 Triệu</span>
                         </div>
                       </div>
 
+                      <div className="space-y-2">
+                        <label className="text-xs text-slate-600 block">Kỳ hạn thanh toán mong muốn</label>
+                        <div className="grid grid-cols-4 gap-2">
+                          {[6, 12, 18, 24].map((term) => (
+                            <button
+                              key={term}
+                              onClick={() => setLoanTerm(term)}
+                              className={`py-2 text-xs font-medium rounded-xl border transition-all ${
+                                loanTerm === term
+                                  ? 'bg-red-600 text-white font-bold border-red-600 shadow-sm'
+                                  : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                              }`}
+                            >
+                              {term} Tháng
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-xs text-slate-300 mb-1 block font-medium">Địa chỉ thường trú hiện tại</label>
+                        <label className="text-xs text-slate-700 mb-1 block font-medium">Họ và Tên (Khớp CCCD)</label>
                         <input
                           type="text"
-                          name="address"
-                          placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"
-                          value={formData.address}
+                          name="fullName"
+                          placeholder="NGUYEN VAN A"
+                          value={formData.fullName}
                           onChange={handleInputChange}
-                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-600"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-red-600 focus:bg-white"
                         />
                       </div>
 
-                      <div className="pt-4 flex justify-end">
-                        <button
-                          onClick={() => setCurrentStep(2)}
-                          disabled={!formData.fullName || !formData.idCard || !formData.phone}
-                          className="bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-bold px-6 py-2.5 rounded-xl transition-all flex items-center gap-2 text-sm shadow-lg shadow-red-600/30"
-                        >
-                          Tiếp Theo <i data-lucide="chevron-right" className="w-4 h-4"></i>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* STEP 2 */}
-                  {currentStep === 2 && (
-                    <div className="space-y-4">
-                      <h3 className="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="building-2" className="w-4 h-4 text-red-500"></i> Thông Tin Việc Làm & Tài Khoản Nhận Tiền
-                      </h3>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-xs text-slate-300 mb-1 block font-medium">Hình thức công việc</label>
-                          <select
-                            name="jobType"
-                            value={formData.jobType}
-                            onChange={handleInputChange}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white"
-                          >
-                            <option value="employee">Nhân viên văn phòng / Hợp đồng lao động</option>
-                            <option value="business">Kinh doanh tự do / Hộ kinh doanh</option>
-                            <option value="freelance">Freelance / Lao động tự do</option>
-                            <option value="driver">Tài xế công nghệ / Giao hàng</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="text-xs text-slate-300 mb-1 block font-medium">Mức thu nhập hàng tháng</label>
-                          <select
-                            name="monthlyIncome"
-                            value={formData.monthlyIncome}
-                            onChange={handleInputChange}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white"
-                          >
-                            <option value="8000000">Dưới 10,000,000 đ</option>
-                            <option value="15000000">10,000,000 - 20,000,000 đ</option>
-                            <option value="25000000">20,000,000 - 35,000,000 đ</option>
-                            <option value="40000000">Trên 35,000,000 đ</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="text-xs text-slate-300 mb-1 block font-medium">Tên đơn vị công tác / Cửa hàng</label>
-                          <input
-                            type="text"
-                            name="companyName"
-                            placeholder="Tên cơ quan / công ty..."
-                            value={formData.companyName}
-                            onChange={handleInputChange}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-xs text-slate-300 mb-1 block font-medium">Ngân hàng thụ hưởng giải ngân</label>
-                          <select
-                            name="bankName"
-                            value={formData.bankName}
-                            onChange={handleInputChange}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white"
-                          >
-                            <optgroup label="Ngân hàng TMCP lớn">
-                              <option value="MBBank">MBBank - Ngân hàng Quân Đội</option>
-                              <option value="VPBank">VPBank - Ngân hàng Thịnh Vượng</option>
-                              <option value="Techcombank">Techcombank - Kỹ Thương</option>
-                              <option value="Vietcombank">Vietcombank - Ngoại Thương</option>
-                              <option value="ACB">ACB - Ngân hàng Á Châu</option>
-                              <option value="TPBank">TPBank - Tiên Phong</option>
-                              <option value="BIDV">BIDV - Đầu Tư và Phát Triển</option>
-                              <option value="Agribank">Agribank - Nông Nghiệp</option>
-                              <option value="VietinBank">VietinBank - Công Thương</option>
-                              <option value="Sacombank">Sacombank - Sài Gòn Thương Tín</option>
-                              <option value="SHB">SHB - Sài Gòn - Hà Nội</option>
-                              <option value="VIB">VIB - Quốc Tế</option>
-                              <option value="HDBank">HDBank - Phát Triển TP.HCM</option>
-                              <option value="MSB">MSB - Hàng Hải</option>
-                              <option value="OCB">OCB - Phương Đông</option>
-                              <option value="SeABank">SeABank - Đông Nam Á</option>
-                              <option value="Eximbank">Eximbank - Xuất Nhập Khẩu</option>
-                              <option value="LPBank">LPBank - Lộc Phát</option>
-                            </optgroup>
-                            <optgroup label="Ngân hàng số & Tổ chức tài chính">
-                              <option value="CakeByVPBank">Cake by VPBank</option>
-                              <option value="Timo">Timo by Ban Viet</option>
-                              <option value="UBank">Ubank by VPBank</option>
-                              <option value="ShinhanFinance">Shinhan Finance</option>
-                              <option value="LotteFinance">Lotte Finance</option>
-                              <option value="FECredit">FE Credit</option>
-                              <option value="HomeCredit">Home Credit</option>
-                            </optgroup>
-                          </select>
-                        </div>
+                      <div>
+                        <label className="text-xs text-slate-700 mb-1 block font-medium">Số CCCD (12 chữ số)</label>
+                        <input
+                          type="text"
+                          name="idCard"
+                          placeholder="038090001234"
+                          maxLength={12}
+                          value={formData.idCard}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-red-600 focus:bg-white"
+                        />
                       </div>
 
                       <div>
-                        <label className="text-xs text-slate-300 mb-1 block font-medium">Số tài khoản ngân hàng chính chủ</label>
+                        <label className="text-xs text-slate-700 mb-1 block font-medium">Số Điện Thoại Chính Chủ</label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          placeholder="0987654321"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-red-600 focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-slate-700 mb-1 block font-medium">Địa chỉ Email</label>
+                        <input
+                          type="email"
+                          name="email"
+                          placeholder="nguyenvana@gmail.com"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-red-600 focus:bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-slate-700 mb-1 block font-medium">Địa chỉ thường trú hiện tại</label>
+                      <input
+                        type="text"
+                        name="address"
+                        placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-red-600 focus:bg-white"
+                      />
+                    </div>
+
+                    <div className="pt-4 flex justify-end">
+                      <button
+                        onClick={() => setCurrentStep(2)}
+                        disabled={!formData.fullName || !formData.idCard || !formData.phone}
+                        className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-bold px-6 py-2.5 rounded-xl transition-all flex items-center gap-2 text-sm shadow-md shadow-red-600/20"
+                      >
+                        Tiếp Theo <i data-lucide="chevron-right" className="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 2 */}
+                {currentStep === 2 && (
+                  <div className="space-y-4">
+                    <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                      <i data-lucide="building-2" className="w-4 h-4 text-red-600"></i> Thông Tin Việc Làm & Tài Khoản Nhận Tiền
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs text-slate-700 mb-1 block font-medium">Hình thức công việc</label>
+                        <select
+                          name="jobType"
+                          value={formData.jobType}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white"
+                        >
+                          <option value="employee">Nhân viên văn phòng / Hợp đồng lao động</option>
+                          <option value="business">Kinh doanh tự do / Hộ kinh doanh</option>
+                          <option value="freelance">Freelance / Lao động tự do</option>
+                          <option value="driver">Tài xế công nghệ / Giao hàng</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-slate-700 mb-1 block font-medium">Mức thu nhập hàng tháng</label>
+                        <select
+                          name="monthlyIncome"
+                          value={formData.monthlyIncome}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white"
+                        >
+                          <option value="8000000">Dưới 10,000,000 đ</option>
+                          <option value="15000000">10,000,000 - 20,000,000 đ</option>
+                          <option value="25000000">20,000,000 - 35,000,000 đ</option>
+                          <option value="40000000">Trên 35,000,000 đ</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-slate-700 mb-1 block font-medium">Tên đơn vị công tác / Cửa hàng</label>
+                        <input
+                          type="text"
+                          name="companyName"
+                          placeholder="Tên cơ quan / công ty..."
+                          value={formData.companyName}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-slate-700 mb-1 block font-medium">Ngân hàng thụ hưởng giải ngân</label>
+                        <select
+                          name="bankName"
+                          value={formData.bankName}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white"
+                        >
+                          <optgroup label="Ngân hàng TMCP lớn">
+                            <option value="MBBank">MBBank - Ngân hàng Quân Đội</option>
+                            <option value="VPBank">VPBank - Ngân hàng Thịnh Vượng</option>
+                            <option value="Techcombank">Techcombank - Kỹ Thương</option>
+                            <option value="Vietcombank">Vietcombank - Ngoại Thương</option>
+                            <option value="ACB">ACB - Ngân hàng Á Châu</option>
+                            <option value="TPBank">TPBank - Tiên Phong</option>
+                            <option value="BIDV">BIDV - Đầu Tư và Phát Triển</option>
+                            <option value="Agribank">Agribank - Nông Nghiệp</option>
+                            <option value="VietinBank">VietinBank - Công Thương</option>
+                            <option value="Sacombank">Sacombank - Sài Gòn Thương Tín</option>
+                            <option value="SHB">SHB - Sài Gòn - Hà Nội</option>
+                            <option value="VIB">VIB - Quốc Tế</option>
+                            <option value="HDBank">HDBank - Phát Triển TP.HCM</option>
+                            <option value="MSB">MSB - Hàng Hải</option>
+                            <option value="OCB">OCB - Phương Đông</option>
+                            <option value="SeABank">SeABank - Đông Nam Á</option>
+                            <option value="Eximbank">Eximbank - Xuất Nhập Khẩu</option>
+                            <option value="LPBank">LPBank - Lộc Phát</option>
+                          </optgroup>
+                          <optgroup label="Ngân hàng số & Tổ chức tài chính">
+                            <option value="CakeByVPBank">Cake by VPBank</option>
+                            <option value="Timo">Timo by Ban Viet</option>
+                            <option value="UBank">Ubank by VPBank</option>
+                            <option value="ShinhanFinance">Shinhan Finance</option>
+                            <option value="LotteFinance">Lotte Finance</option>
+                            <option value="FECredit">FE Credit</option>
+                            <option value="HomeCredit">Home Credit</option>
+                          </optgroup>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs text-slate-700 mb-1 block font-medium">Số tài khoản ngân hàng chính chủ</label>
                         <input
                           type="text"
                           name="bankAccount"
-                          placeholder="Nhập chính xác số tài khoản..."
+                          placeholder="Nhập số tài khoản..."
                           value={formData.bankAccount}
                           onChange={handleInputChange}
-                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white"
                         />
                       </div>
 
+                      <div>
+                        <label className="text-xs text-slate-700 mb-1 block font-medium">Tên chủ tài khoản (Viết hoa không dấu)</label>
+                        <input
+                          type="text"
+                          name="accountHolder"
+                          placeholder="VD: NGUYEN VAN A"
+                          value={formData.accountHolder}
+                          onChange={handleInputChange}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 uppercase focus:bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-4 flex justify-between">
+                      <button
+                        onClick={() => setCurrentStep(1)}
+                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-5 py-2.5 rounded-xl text-sm"
+                      >
+                        Quay lại
+                      </button>
+                      <button
+                        onClick={() => setCurrentStep(3)}
+                        disabled={!formData.bankAccount || !formData.accountHolder}
+                        className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-bold px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-md shadow-red-600/20"
+                      >
+                        Tiếp Theo <i data-lucide="chevron-right" className="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* STEP 3 */}
+                {currentStep === 3 && (
+                  <div className="space-y-4">
+                    <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                      <i data-lucide="credit-card" className="w-4 h-4 text-red-600"></i> Xác Thực Định Danh Trực Tuyến (eKYC)
+                    </h3>
+                    <p className="text-xs text-slate-600">
+                      Vui lòng cung cấp hình ảnh chụp thực tế Căn cước công dân (mặt trước và mặt sau) để hệ thống ghi nhận hồ sơ.
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                      {/* CCCD Mặt Trước */}
+                      <div className="border-2 border-dashed border-slate-300 hover:border-red-500 rounded-xl p-4 text-center bg-slate-50 transition-all relative overflow-hidden">
+                        {cccdFront ? (
+                          <div className="space-y-2">
+                            <img src={cccdFront} alt="CCCD Mặt trước" className="w-full h-32 object-cover rounded-lg border border-red-200" />
+                            <label className="text-[11px] text-red-600 font-semibold cursor-pointer block hover:underline">
+                              Thay đổi ảnh khác
+                              <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'front')} className="hidden" />
+                            </label>
+                          </div>
+                        ) : (
+                          <label className="cursor-pointer block py-3">
+                            <i data-lucide="upload-cloud" className="w-8 h-8 text-red-600 mx-auto mb-2"></i>
+                            <p className="text-xs font-semibold text-slate-800">CCCD Mặt Trước</p>
+                            <span className="text-[10px] text-slate-500 block mt-1">Chụp hoặc tải lên ảnh rõ nét</span>
+                            <span className="mt-3 inline-block bg-white hover:bg-slate-100 text-red-600 text-xs px-3 py-1.5 rounded-lg border border-slate-200 font-medium shadow-xs">
+                              Tải ảnh lên
+                            </span>
+                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'front')} className="hidden" />
+                          </label>
+                        )}
+                      </div>
+
+                      {/* CCCD Mặt Sau */}
+                      <div className="border-2 border-dashed border-slate-300 hover:border-red-500 rounded-xl p-4 text-center bg-slate-50 transition-all relative overflow-hidden">
+                        {cccdBack ? (
+                          <div className="space-y-2">
+                            <img src={cccdBack} alt="CCCD Mặt sau" className="w-full h-32 object-cover rounded-lg border border-red-200" />
+                            <label className="text-[11px] text-red-600 font-semibold cursor-pointer block hover:underline">
+                              Thay đổi ảnh khác
+                              <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'back')} className="hidden" />
+                            </label>
+                          </div>
+                        ) : (
+                          <label className="cursor-pointer block py-3">
+                            <i data-lucide="upload-cloud" className="w-8 h-8 text-rose-600 mx-auto mb-2"></i>
+                            <p className="text-xs font-semibold text-slate-800">CCCD Mặt Sau</p>
+                            <span className="text-[10px] text-slate-500 block mt-1">Chụp hoặc tải lên ảnh rõ nét</span>
+                            <span className="mt-3 inline-block bg-white hover:bg-slate-100 text-rose-600 text-xs px-3 py-1.5 rounded-lg border border-slate-200 font-medium shadow-xs">
+                              Tải ảnh lên
+                            </span>
+                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'back')} className="hidden" />
+                          </label>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mt-4 text-xs text-red-900">
+                      Hệ thống đã sẵn sàng tiếp nhận hồ sơ đăng ký hạn mức từ <strong>30.000.000đ đến 100.000.000đ</strong> của Quý khách.
+                    </div>
+
+                    {isAnalyzing ? (
+                      <div className="py-6 text-center space-y-3">
+                        <i data-lucide="refresh-cw" className="w-8 h-8 text-red-600 animate-spin mx-auto"></i>
+                        <p className="text-sm font-semibold text-red-600">
+                          Đang xử lý và mã hóa thông tin... {analysisProgress}%
+                        </p>
+                      </div>
+                    ) : (
                       <div className="pt-4 flex justify-between">
                         <button
-                          onClick={() => setCurrentStep(1)}
-                          className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-5 py-2.5 rounded-xl text-sm"
+                          onClick={() => setCurrentStep(2)}
+                          className="bg-slate-100 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-200"
                         >
                           Quay lại
                         </button>
                         <button
-                          onClick={() => setCurrentStep(3)}
-                          disabled={!formData.bankAccount}
-                          className="bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-bold px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-red-600/30"
+                          disabled={!cccdFront || !cccdBack}
+                          onClick={triggerAutoApproval}
+                          className="bg-gradient-to-r from-red-600 to-rose-600 disabled:opacity-40 text-white font-bold px-7 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-md shadow-red-600/20 hover:from-red-700 hover:to-rose-700"
                         >
-                          Tiếp Theo <i data-lucide="chevron-right" className="w-4 h-4"></i>
+                          <i data-lucide="zap" className="w-4 h-4"></i> Xác Nhận Gửi Hồ Sơ
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* STEP 4 */}
+                {currentStep === 4 && approvalResult && (
+                  <div className="space-y-5">
+                    <div className="bg-gradient-to-b from-red-50 to-white border border-red-200 rounded-2xl p-6 text-center space-y-4 shadow-sm">
+                      <div className="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto border border-red-200 shadow-sm">
+                        <i data-lucide="smartphone" className="w-7 h-7"></i>
+                      </div>
+                      
+                      <div>
+                        <span className="text-xs uppercase tracking-wider text-red-600 font-bold">Yêu cầu hoàn tất định danh số</span>
+                        <h3 className="text-xl font-extrabold text-slate-900 mt-1">
+                          Vui Lòng Tải Ứng Dụng Tikluy Để Hoàn Tất Hồ Sơ!
+                        </h3>
+                      </div>
+
+                      <p className="text-xs text-slate-600 leading-relaxed px-2">
+                        Hồ sơ đề xuất vay của Quý khách (<strong className="text-red-600">{formatVND(approvalResult.amount)}</strong>) đã được ghi nhận trên hệ thống. Để tiếp tục quy trình xét duyệt và giải ngân tự động, xin vui lòng cài đặt ứng dụng <strong className="text-slate-900">Tikluy</strong>, tiến hành <strong className="text-slate-900">Đăng ký tài khoản mới</strong> và nhập mã giới thiệu nhân viên dưới đây.
+                      </p>
+
+                      {/* Hộp mã giới thiệu nổi bật */}
+                      <div className="bg-white border border-red-200 p-4 rounded-xl space-y-1.5 shadow-xs">
+                        <p className="text-xs text-slate-500 uppercase font-semibold">Mã giới thiệu nhân viên hỗ trợ ưu tiên:</p>
+                        <div className="text-2xl font-black text-red-600 tracking-wider font-mono">
+                          0878665588
+                        </div>
+                        <p className="text-[11px] text-red-700">*(Sử dụng mã này khi đăng ký tài khoản mới trên ứng dụng Tikluy để được ưu tiên xử lý hồ sơ nhanh chóng)*</p>
+                      </div>
+
+                      {/* Nút tải app iOS và Android */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <a 
+                          href="https://apps.apple.com/vn/app/tikluy/id6504506939" 
+                          target="_blank" 
+                          className="bg-slate-900 hover:bg-slate-800 text-white p-3.5 rounded-xl flex items-center justify-center gap-3 transition-all group shadow-sm"
+                        >
+                          <i data-lucide="apple" className="w-6 h-6 text-white group-hover:scale-110 transition-transform"></i>
+                          <div className="text-left">
+                            <p className="text-[10px] text-slate-400 uppercase font-medium leading-none">Tải về trên</p>
+                            <p className="text-sm font-bold text-white">App Store (iOS)</p>
+                          </div>
+                        </a>
+
+                        <a 
+                          href="https://play.google.com/store/apps/details?id=com.tikluy" 
+                          target="_blank" 
+                          className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 p-3.5 rounded-xl flex items-center justify-center gap-3 transition-all group shadow-sm"
+                        >
+                          <i data-lucide="play" className="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform fill-red-600"></i>
+                          <div className="text-left">
+                            <p className="text-[10px] text-slate-500 uppercase font-medium leading-none">Tải về trên</p>
+                            <p className="text-sm font-bold text-slate-900">Google Play</p>
+                          </div>
+                        </a>
+                      </div>
+
+                      <div className="pt-2">
+                        <button
+                          onClick={() => {
+                            setCurrentStep(1);
+                          }}
+                          className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 rounded-xl transition-all border border-slate-200"
+                        >
+                          Quay lại trang chủ đăng ký
                         </button>
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {/* STEP 3 - TẢI ẢNH THẬT CCCD */}
-                  {currentStep === 3 && (
-                    <div className="space-y-4">
-                      <h3 className="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="credit-card" className="w-4 h-4 text-red-500"></i> Xác Thực Định Danh Trực Tuyến (eKYC)
-                      </h3>
-                      <p className="text-xs text-slate-400">
-                        Vui lòng cung cấp hình ảnh chụp thực tế Căn cước công dân (mặt trước và mặt sau) để hệ thống ghi nhận hồ sơ.
-                      </p>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                        {/* CCCD Mặt Trước */}
-                        <div className="border-2 border-dashed border-slate-800 hover:border-red-500/50 rounded-xl p-4 text-center bg-slate-950 transition-all relative overflow-hidden">
-                          {cccdFront ? (
-                            <div className="space-y-2">
-                              <img src={cccdFront} alt="CCCD Mặt trước" className="w-full h-32 object-cover rounded-lg border border-red-500/40" />
-                              <label className="text-[11px] text-red-400 font-semibold cursor-pointer block hover:underline">
-                                Thay đổi ảnh khác
-                                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'front')} className="hidden" />
-                              </label>
-                            </div>
-                          ) : (
-                            <label className="cursor-pointer block py-3">
-                              <i data-lucide="upload-cloud" className="w-8 h-8 text-red-500 mx-auto mb-2"></i>
-                              <p className="text-xs font-semibold text-slate-200">CCCD Mặt Trước</p>
-                              <span className="text-[10px] text-slate-400 block mt-1">Chụp hoặc tải lên ảnh rõ nét</span>
-                              <span className="mt-3 inline-block bg-slate-900 hover:bg-slate-800 text-red-400 text-xs px-3 py-1.5 rounded-lg border border-slate-800 font-medium">
-                                Tải ảnh lên
-                              </span>
-                              <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'front')} className="hidden" />
-                            </label>
-                          )}
-                        </div>
-
-                        {/* CCCD Mặt Sau */}
-                        <div className="border-2 border-dashed border-slate-800 hover:border-red-500/50 rounded-xl p-4 text-center bg-slate-950 transition-all relative overflow-hidden">
-                          {cccdBack ? (
-                            <div className="space-y-2">
-                              <img src={cccdBack} alt="CCCD Mặt sau" className="w-full h-32 object-cover rounded-lg border border-red-500/40" />
-                              <label className="text-[11px] text-red-400 font-semibold cursor-pointer block hover:underline">
-                                Thay đổi ảnh khác
-                                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'back')} className="hidden" />
-                              </label>
-                            </div>
-                          ) : (
-                            <label className="cursor-pointer block py-3">
-                              <i data-lucide="upload-cloud" className="w-8 h-8 text-rose-400 mx-auto mb-2"></i>
-                              <p className="text-xs font-semibold text-slate-200">CCCD Mặt Sau</p>
-                              <span className="text-[10px] text-slate-400 block mt-1">Chụp hoặc tải lên ảnh rõ nét</span>
-                              <span className="mt-3 inline-block bg-slate-900 hover:bg-slate-800 text-rose-400 text-xs px-3 py-1.5 rounded-lg border border-slate-800 font-medium">
-                                Tải ảnh lên
-                              </span>
-                              <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'back')} className="hidden" />
-                            </label>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="bg-red-950/20 border border-red-500/30 rounded-xl p-4 mt-4 text-xs text-slate-300">
-                        Hệ thống đã sẵn sàng tiếp nhận hồ sơ đăng ký hạn mức từ <strong>30.000.000đ đến 100.000.000đ</strong> của Quý khách.
-                      </div>
-
-                      {isAnalyzing ? (
-                        <div className="py-6 text-center space-y-3">
-                          <i data-lucide="refresh-cw" className="w-8 h-8 text-red-500 animate-spin mx-auto"></i>
-                          <p className="text-sm font-semibold text-red-400">
-                            Đang xử lý và mã hóa thông tin... {analysisProgress}%
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="pt-4 flex justify-between">
-                          <button
-                            onClick={() => setCurrentStep(2)}
-                            className="bg-slate-800 text-slate-200 px-5 py-2.5 rounded-xl text-sm"
-                          >
-                            Quay lại
-                          </button>
-                          <button
-                            disabled={!cccdFront || !cccdBack}
-                            onClick={triggerAutoApproval}
-                            className="bg-gradient-to-r from-red-600 to-rose-500 disabled:opacity-40 text-white font-bold px-7 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-red-600/30"
-                          >
-                            <i data-lucide="zap" className="w-4 h-4"></i> Xác Nhận Gửi Hồ Sơ
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* STEP 4 - THÔNG BÁO TẢI APP & MÃ GIỚI THIỆU CHUYÊN NGHIỆP */}
-                  {currentStep === 4 && approvalResult && (
-                    <div className="space-y-5">
-                      <div className="bg-gradient-to-b from-red-950/50 to-slate-950 border border-red-500/40 rounded-2xl p-6 text-center space-y-4 shadow-xl">
-                        <div className="w-14 h-14 bg-red-600/20 text-red-500 rounded-full flex items-center justify-center mx-auto border border-red-500/40 shadow-lg shadow-red-600/20">
-                          <i data-lucide="smartphone" className="w-7 h-7"></i>
-                        </div>
-                        
-                        <div>
-                          <span className="text-xs uppercase tracking-wider text-red-400 font-bold">Yêu cầu hoàn tất định danh số</span>
-                          <h3 className="text-xl font-extrabold text-white mt-1">
-                            Vui Lòng Tải Ứng Dụng Tikluy Để Hoàn Tất Hồ Sơ!
-                          </h3>
-                        </div>
-
-                        <p className="text-xs text-slate-300 leading-relaxed px-2">
-                          Hồ sơ đề xuất vay của Quý khách (<strong className="text-red-400">{formatVND(approvalResult.amount)}</strong>) đã được ghi nhận trên hệ thống. Để tiếp tục quy trình xét duyệt và giải ngân tự động, xin vui lòng cài đặt ứng dụng <strong className="text-white">Tikluy</strong>, tiến hành <strong className="text-white">Đăng ký tài khoản mới</strong> và nhập mã giới thiệu nhân viên dưới đây.
-                        </p>
-
-                        {/* Hộp mã giới thiệu nổi bật */}
-                        <div className="bg-slate-900 border border-red-500/50 p-4 rounded-xl space-y-1.5 shadow-inner">
-                          <p className="text-xs text-slate-400 uppercase font-semibold">Mã giới thiệu nhân viên hỗ trợ ưu tiên:</p>
-                          <div className="text-2xl font-black text-red-500 tracking-wider font-mono">
-                            0878665588
-                          </div>
-                          <p className="text-[11px] text-rose-300">*(Sử dụng mã này khi đăng ký tài khoản mới trên ứng dụng Tikluy để được ưu tiên xử lý hồ sơ nhanh chóng)*</p>
-                        </div>
-
-                        {/* Nút tải app iOS và Android */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                          <a 
-                            href="https://apps.apple.com/vn/app/tikluy/id6504506939" 
-                            target="_blank" 
-                            className="bg-slate-900 hover:bg-slate-800 border border-slate-700 p-3.5 rounded-xl flex items-center justify-center gap-3 transition-all group shadow-md"
-                          >
-                            <i data-lucide="apple" className="w-6 h-6 text-white group-hover:scale-110 transition-transform"></i>
-                            <div className="text-left">
-                              <p className="text-[10px] text-slate-400 uppercase font-medium leading-none">Tải về trên</p>
-                              <p className="text-sm font-bold text-white">App Store (iOS)</p>
-                            </div>
-                          </a>
-
-                          <a 
-                            href="https://play.google.com/store/apps/details?id=com.tikluy" 
-                            target="_blank" 
-                            className="bg-slate-900 hover:bg-slate-800 border border-slate-700 p-3.5 rounded-xl flex items-center justify-center gap-3 transition-all group shadow-md"
-                          >
-                            <i data-lucide="play" className="w-6 h-6 text-red-500 group-hover:scale-110 transition-transform fill-red-500"></i>
-                            <div className="text-left">
-                              <p className="text-[10px] text-slate-400 uppercase font-medium leading-none">Tải về trên</p>
-                              <p className="text-sm font-bold text-white">Google Play</p>
-                            </div>
-                          </a>
-                        </div>
-
-                        <div className="pt-2">
-                          <button
-                            onClick={() => {
-                              setCurrentStep(1);
-                            }}
-                            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold py-2.5 rounded-xl transition-all border border-slate-700"
-                          >
-                            Quay lại trang chủ đăng ký
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                </div>
               </div>
-
             </div>
           </main>
         </div>
