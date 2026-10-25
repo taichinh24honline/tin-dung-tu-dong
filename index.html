@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FinCredit VN - Hỗ Trợ Tín Dụng Duyệt Tự Động</title>
-  <!-- Tailwind CSS & React React-DOM Babel via CDN -->
+  <title>FinCredit VN - Duyệt Tín Dụng Tự Động 30M - 100M</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen pb-12">
   <div id="root"></div>
 
   <script type="text/babel">
@@ -21,6 +22,7 @@
     function App() {
       const [activeTab, setActiveTab] = useState('apply');
       const [currentStep, setCurrentStep] = useState(1);
+      
       const [loanAmount, setLoanAmount] = useState(50000000);
       const [loanTerm, setLoanTerm] = useState(12);
       const [interestRate, setInterestRate] = useState(1.1);
@@ -41,6 +43,12 @@
         { id: 'CR-88921', fullName: 'Trần Văn Nam', phone: '0981***456', amount: 60000000, term: 12, score: 742, status: 'approved', date: '2026-10-24' },
         { id: 'CR-88922', fullName: 'Lê Thị Thu', phone: '0912***888', amount: 40000000, term: 6, score: 610, status: 'pending_review', date: '2026-10-25' }
       ]);
+
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [activeTab, currentStep, isAnalyzing, approvalResult]);
 
       const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -109,151 +117,266 @@
       };
 
       return (
-        <div className="pb-12">
+        <div>
           {/* Header */}
-          <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 h-16 flex items-center justify-between max-w-6xl mx-auto">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg">FC</div>
-              <div>
-                <h1 className="font-bold text-lg leading-tight bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">FinCredit VN</h1>
-                <p className="text-[10px] text-slate-400">Duyệt Tín Dụng Tự Động 30M - 100M</p>
+          <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+            <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-emerald-500/20">FC</div>
+                <div>
+                  <h1 className="font-bold text-lg leading-tight bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">FinCredit VN</h1>
+                  <p className="text-xs text-slate-400">Hệ thống Duyệt Tín Dụng Tự Động</p>
+                </div>
               </div>
+              <nav className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/50">
+                <button onClick={() => setActiveTab('apply')} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${activeTab === 'apply' ? 'bg-emerald-500 text-slate-950 font-semibold shadow-md' : 'text-slate-300'}`}>
+                  <i data-lucide="zap" className="w-3.5 h-3.5"></i> Nộp Hồ Sơ
+                </button>
+                <button onClick={() => setActiveTab('dashboard')} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${activeTab === 'dashboard' ? 'bg-emerald-500 text-slate-950 font-semibold shadow-md' : 'text-slate-300'}`}>
+                  <i data-lucide="layout-dashboard" className="w-3.5 h-3.5"></i> Khoản Vay
+                </button>
+                <button onClick={() => setActiveTab('admin')} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${activeTab === 'admin' ? 'bg-emerald-500 text-slate-950 font-semibold shadow-md' : 'text-slate-300'}`}>
+                  <i data-lucide="shield-check" className="w-3.5 h-3.5"></i> Quản Lý
+                </button>
+              </nav>
             </div>
-            <nav className="flex gap-1 bg-slate-800 p-1 rounded-xl text-xs">
-              <button onClick={() => setActiveTab('apply')} className={`px-2.5 py-1.5 rounded-lg ${activeTab === 'apply' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300'}`}>Đăng Ký</button>
-              <button onClick={() => setActiveTab('dashboard')} className={`px-2.5 py-1.5 rounded-lg ${activeTab === 'dashboard' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300'}`}>Khoản Vay</button>
-              <button onClick={() => setActiveTab('admin')} className={`px-2.5 py-1.5 rounded-lg ${activeTab === 'admin' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300'}`}>Quản Lý</button>
-            </nav>
           </header>
 
           <main className="max-w-6xl mx-auto px-4 pt-6">
             {activeTab === 'apply' && (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Calculator */}
-                <div className="lg:col-span-5 bg-slate-800/90 border border-slate-700 rounded-2xl p-5 space-y-4">
-                  <h3 className="font-bold text-emerald-400 text-sm">Công Cụ Tính Khoản Vay</h3>
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-400">Số tiền vay:</span>
-                      <span className="text-emerald-400 font-bold text-base">{formatVND(loanAmount)}</span>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Calculator Column */}
+                <div className="lg:col-span-5 space-y-6">
+                  <div className="bg-gradient-to-br from-emerald-950/40 via-slate-800/60 to-slate-900 border border-emerald-500/20 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+                    <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
+                      <i data-lucide="zap" className="w-4 h-4"></i> AI Credit Engine
                     </div>
-                    <input type="range" min="30000000" max="100000000" step="5000000" value={loanAmount} onChange={e => setLoanAmount(Number(e.target.value))} className="w-full accent-emerald-500 h-2 bg-slate-700 rounded-lg cursor-pointer" />
+                    <h2 className="text-xl font-bold text-white mb-2">Duyệt Tự Động Từ 30 - 100 Triệu</h2>
+                    <p className="text-slate-300 text-xs leading-relaxed mb-4">Giải ngân siêu tốc trong 15 phút. Không thế chấp tài sản, thẩm định bằng AI tự động 24/7.</p>
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                      <div className="bg-slate-900/60 border border-slate-700/50 p-2.5 rounded-xl">
+                        <i data-lucide="clock" className="w-4 h-4 text-teal-400 mx-auto mb-1"></i>
+                        <p className="text-[10px] text-slate-400">Thời gian</p>
+                        <p className="text-xs font-bold text-white">15 Phút</p>
+                      </div>
+                      <div className="bg-slate-900/60 border border-slate-700/50 p-2.5 rounded-xl">
+                        <i data-lucide="shield-check" className="w-4 h-4 text-emerald-400 mx-auto mb-1"></i>
+                        <p className="text-[10px] text-slate-400">Bảo mật</p>
+                        <p className="text-xs font-bold text-white">Mã hóa 256</p>
+                      </div>
+                      <div className="bg-slate-900/60 border border-slate-700/50 p-2.5 rounded-xl">
+                        <i data-lucide="activity" className="w-4 h-4 text-cyan-400 mx-auto mb-1"></i>
+                        <p className="text-[10px] text-slate-400">Lãi suất chỉ</p>
+                        <p className="text-xs font-bold text-emerald-400">1.1%/tháng</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-xs text-slate-400 block mb-1">Thời hạn vay</label>
-                    <div className="grid grid-cols-4 gap-2">
-                      {[6, 12, 18, 24].map(t => (
-                        <button key={t} onClick={() => setLoanTerm(t)} className={`py-1.5 text-xs rounded-xl border ${loanTerm === t ? 'bg-emerald-500 text-slate-950 font-bold border-emerald-400' : 'bg-slate-900 border-slate-700 text-slate-300'}`}>{t}T</button>
-                      ))}
+
+                  <div className="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-5">
+                    <div className="flex items-center justify-between border-b border-slate-700 pb-3">
+                      <h3 className="font-bold text-slate-100 flex items-center gap-2 text-sm">
+                        <i data-lucide="calculator" className="w-4 h-4 text-emerald-400"></i> Công Cụ Tính Khoản Vay
+                      </h3>
+                      <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Minh bạch 100%</span>
                     </div>
-                  </div>
-                  <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-700 space-y-2 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Gốc + Lãi tháng đầu:</span>
-                      <span className="font-bold text-white">{formatVND(calcDetails.firstMonth)}</span>
+
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-slate-400">Số tiền cần vay</span>
+                        <span className="text-emerald-400 font-bold text-base">{formatVND(loanAmount)}</span>
+                      </div>
+                      <input type="range" min="30000000" max="100000000" step="5000000" value={loanAmount} onChange={e => setLoanAmount(Number(e.target.value))} className="w-full accent-emerald-500 h-2 bg-slate-700 rounded-lg cursor-pointer" />
+                      <div className="flex justify-between text-[10px] text-slate-400">
+                        <span>30,000,000đ</span>
+                        <span>60,000,000đ</span>
+                        <span>100,000,000đ</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between pt-1 border-t border-slate-800">
-                      <span className="text-slate-400">Tổng thanh toán:</span>
-                      <span className="text-emerald-400 font-bold">{formatVND(calcDetails.totalPayment)}</span>
+
+                    <div className="space-y-2">
+                      <label className="text-xs text-slate-400 block">Thời hạn vay (tháng)</label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {[6, 12, 18, 24].map(t => (
+                          <button key={t} onClick={() => setLoanTerm(t)} className={`py-2 text-xs font-medium rounded-xl border transition-all ${loanTerm === t ? 'bg-emerald-500 text-slate-950 font-bold border-emerald-400 shadow-md' : 'bg-slate-900/60 border-slate-700 text-slate-300'}`}>{t} Tháng</button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between bg-slate-900/50 p-2.5 rounded-xl border border-slate-700/50 text-xs">
+                      <span className="text-slate-400">Phương thức tính lãi</span>
+                      <div className="flex gap-1 bg-slate-800 p-1 rounded-lg">
+                        <button onClick={() => setCalcType('declining')} className={`px-2.5 py-1 rounded-md text-[11px] ${calcType === 'declining' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400'}`}>Dư nợ giảm dần</button>
+                        <button onClick={() => setCalcType('flat')} className={`px-2.5 py-1 rounded-md text-[11px] ${calcType === 'flat' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400'}`}>Lãi cố định</button>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-900/80 rounded-xl p-4 border border-slate-700/70 space-y-2.5">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-slate-400">Gốc + Lãi ước tính tháng đầu:</span>
+                        <span className="font-bold text-white text-sm">{formatVND(calcDetails.firstMonth)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs pt-2 border-t border-slate-800">
+                        <span className="text-slate-400">Tổng chi phí khoản vay:</span>
+                        <span className="text-emerald-400 font-bold text-sm">{formatVND(calcDetails.totalPayment)}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Form Steps */}
-                <div className="lg:col-span-7 bg-slate-800/90 border border-slate-700 rounded-2xl p-5">
-                  <div className="mb-4">
-                    <span className="text-xs text-emerald-400 font-bold">Bước {currentStep} / 4</span>
-                    <div className="w-full bg-slate-700 h-1.5 rounded-full mt-1 overflow-hidden">
-                      <div className="bg-emerald-500 h-full transition-all duration-300" style={{ width: `${currentStep * 25}%` }}></div>
-                    </div>
-                  </div>
-
-                  {currentStep === 1 && (
-                    <div className="space-y-3">
-                      <h3 className="font-bold text-white text-sm">1. Thông tin cá nhân</h3>
-                      <input type="text" name="fullName" placeholder="Họ và tên trên CCCD" value={formData.fullName} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm" />
-                      <input type="text" name="idCard" placeholder="Số CCCD (12 số)" maxLength={12} value={formData.idCard} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm" />
-                      <input type="tel" name="phone" placeholder="Số điện thoại" value={formData.phone} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm" />
-                      <button disabled={!formData.fullName || !formData.idCard || !formData.phone} onClick={() => setCurrentStep(2)} className="w-full bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold py-2.5 rounded-xl text-sm mt-2">Tiếp Theo</button>
-                    </div>
-                  )}
-
-                  {currentStep === 2 && (
-                    <div className="space-y-3">
-                      <h3 className="font-bold text-white text-sm">2. Nghề nghiệp & Ngân hàng</h3>
-                      <select name="monthlyIncome" value={formData.monthlyIncome} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm">
-                        <option value="8000000">Dưới 10M / tháng</option>
-                        <option value="15000000">10M - 20M / tháng</option>
-                        <option value="25000000">Trên 20M / tháng</option>
-                      </select>
-                      <input type="text" name="bankAccount" placeholder="Số tài khoản nhận tiền" value={formData.bankAccount} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm" />
-                      <div className="flex gap-2">
-                        <button onClick={() => setCurrentStep(1)} className="w-1/3 bg-slate-700 py-2.5 rounded-xl text-sm">Trở lại</button>
-                        <button disabled={!formData.bankAccount} onClick={() => setCurrentStep(3)} className="w-2/3 bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold py-2.5 rounded-xl text-sm">Tiếp Theo</button>
+                {/* Form Steps Column */}
+                <div className="lg:col-span-7">
+                  <div className="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                    <div className="mb-6">
+                      <div className="flex justify-between items-center mb-3 text-xs">
+                        <span className="font-semibold text-emerald-400 uppercase tracking-wider">
+                          Bước {currentStep} / 4: {currentStep === 1 ? 'Thông tin cá nhân' : currentStep === 2 ? 'Thu nhập & Ngân hàng' : currentStep === 3 ? 'Xác thực eKYC' : 'Phê duyệt & Giải ngân'}
+                        </span>
+                        <span className="text-slate-400 font-medium">{currentStep * 25}%</span>
+                      </div>
+                      <div className="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                        <div className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full transition-all duration-300" style={{ width: `${currentStep * 25}%` }}></div>
                       </div>
                     </div>
-                  )}
 
-                  {currentStep === 3 && (
-                    <div className="space-y-4 text-center">
-                      <h3 className="font-bold text-white text-sm text-left">3. Xác thực & Thẩm định AI</h3>
-                      <p className="text-xs text-slate-400 text-left">Hệ thống sẽ tra cứu tự động điểm uy tín CIC dựa trên số CCCD.</p>
-                      {isAnalyzing ? (
-                        <div className="py-8 space-y-2">
-                          <p className="text-emerald-400 font-bold text-base animate-pulse">Đang thẩm định AI... {analysisProgress}%</p>
-                          <p className="text-xs text-slate-400">Vui lòng chờ trong giây lát</p>
+                    {currentStep === 1 && (
+                      <div className="space-y-4">
+                        <h3 className="text-base font-bold text-white flex items-center gap-2">
+                          <i data-lucide="user" className="w-4 h-4 text-emerald-400"></i> Thông Tin Người Vay
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-xs text-slate-300 mb-1 block">Họ và Tên (Trên CCCD)</label>
+                            <input type="text" name="fullName" placeholder="NGUYEN VAN A" value={formData.fullName} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-emerald-500" />
+                          </div>
+                          <div>
+                            <label className="text-xs text-slate-300 mb-1 block">Số CCCD (12 Số)</label>
+                            <input type="text" name="idCard" placeholder="038090001234" maxLength={12} value={formData.idCard} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-emerald-500" />
+                          </div>
+                          <div>
+                            <label className="text-xs text-slate-300 mb-1 block">Số Điện Thoại</label>
+                            <input type="tel" name="phone" placeholder="0987654321" value={formData.phone} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-emerald-500" />
+                          </div>
+                          <div>
+                            <label className="text-xs text-slate-300 mb-1 block">Email</label>
+                            <input type="email" name="email" placeholder="nguyenvana@gmail.com" value={formData.email} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-emerald-500" />
+                          </div>
                         </div>
-                      ) : (
-                        <button onClick={triggerAutoApproval} className="w-full bg-emerald-500 text-slate-950 font-bold py-3 rounded-xl text-sm shadow-lg shadow-emerald-500/20">BẮT ĐẦU THẨM ĐỊNH TỰ ĐỘNG</button>
-                      )}
-                    </div>
-                  )}
-
-                  {currentStep === 4 && approvalResult && (
-                    <div className="space-y-4 text-center">
-                      <div className="p-4 bg-emerald-950/40 border border-emerald-500/40 rounded-xl space-y-2">
-                        <h3 className="text-lg font-bold text-emerald-400">KHOẢN VAY ĐƯỢC PHÊ DUYỆT!</h3>
-                        <p className="text-xs text-slate-300">Điểm CIC: <strong className="text-emerald-400">{approvalResult.score}/850</strong></p>
-                        <p className="text-2xl font-extrabold text-white">{formatVND(approvalResult.amount)}</p>
+                        <button disabled={!formData.fullName || !formData.idCard || !formData.phone} onClick={() => setCurrentStep(2)} className="w-full bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold py-3 rounded-xl transition-all text-sm mt-4 shadow-lg shadow-emerald-500/20">Tiếp Theo</button>
                       </div>
-                      <label className="flex items-center gap-2 text-xs text-left cursor-pointer">
-                        <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)} className="accent-emerald-500" />
-                        <span>Tôi đồng ý ký hợp đồng tín dụng điện tử.</span>
-                      </label>
-                      <button disabled={!agreedToTerms} onClick={() => alert("Yêu cầu giải ngân đã gửi tới ngân hàng thành công!")} className="w-full bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold py-3 rounded-xl text-sm">NHẬN TIỀN GIẢI NGÂN</button>
-                    </div>
-                  )}
+                    )}
+
+                    {currentStep === 2 && (
+                      <div className="space-y-4">
+                        <h3 className="text-base font-bold text-white flex items-center gap-2">
+                          <i data-lucide="building-2" className="w-4 h-4 text-emerald-400"></i> Thu Nhập & Ngân Hàng
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-xs text-slate-300 mb-1 block">Thu nhập thực nhận/tháng</label>
+                            <select name="monthlyIncome" value={formData.monthlyIncome} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white">
+                              <option value="8000000">Dưới 10,000,000 đ</option>
+                              <option value="15000000">10,000,000 - 20,000,000 đ</option>
+                              <option value="25000000">Trên 20,000,000 đ</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="text-xs text-slate-300 mb-1 block">Ngân hàng nhận giải ngân</label>
+                            <select name="bankName" value={formData.bankName} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white">
+                              <option value="MBBank">MBBank</option>
+                              <option value="VPBank">VPBank</option>
+                              <option value="Techcombank">Techcombank</option>
+                              <option value="Vietcombank">Vietcombank</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-xs text-slate-300 mb-1 block">Số tài khoản ngân hàng chính chủ</label>
+                          <input type="text" name="bankAccount" placeholder="0987654321..." value={formData.bankAccount} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+                        </div>
+                        <div className="flex gap-3 pt-2">
+                          <button onClick={() => setCurrentStep(1)} className="w-1/3 bg-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-sm">Quay lại</button>
+                          <button disabled={!formData.bankAccount} onClick={() => setCurrentStep(3)} className="w-2/3 bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20">Tiếp Theo</button>
+                        </div>
+                      </div>
+                    )}
+
+                    {currentStep === 3 && (
+                      <div className="space-y-4">
+                        <h3 className="text-base font-bold text-white flex items-center gap-2">
+                          <i data-lucide="shield-check" className="w-4 h-4 text-emerald-400"></i> Xác Thực & Thẩm Định AI
+                        </h3>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="border border-dashed border-slate-700 rounded-xl p-3 text-center bg-slate-900/50">
+                            <i data-lucide="file-check" className="w-6 h-6 text-emerald-400 mx-auto mb-1"></i>
+                            <p className="text-xs text-slate-300">CCCD Mặt Trước</p>
+                          </div>
+                          <div className="border border-dashed border-slate-700 rounded-xl p-3 text-center bg-slate-900/50">
+                            <i data-lucide="file-check" className="w-6 h-6 text-teal-400 mx-auto mb-1"></i>
+                            <p className="text-xs text-slate-300">CCCD Mặt Sau</p>
+                          </div>
+                        </div>
+
+                        {isAnalyzing ? (
+                          <div className="py-6 text-center space-y-2">
+                            <i data-lucide="refresh-cw" className="w-8 h-8 text-emerald-400 animate-spin mx-auto"></i>
+                            <p className="text-sm font-semibold text-emerald-400">Hệ thống AI đang chấm điểm tín dụng... {analysisProgress}%</p>
+                          </div>
+                        ) : (
+                          <div className="flex gap-3 pt-2">
+                            <button onClick={() => setCurrentStep(2)} className="w-1/3 bg-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-sm">Quay lại</button>
+                            <button onClick={triggerAutoApproval} className="w-2/3 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-bold py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20">Thẩm Định Ngay</button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {currentStep === 4 && approvalResult && (
+                      <div className="space-y-4">
+                        <div className="bg-emerald-950/30 border border-emerald-500/40 rounded-2xl p-5 text-center space-y-3">
+                          <i data-lucide="check-circle-2" className="w-10 h-10 text-emerald-400 mx-auto"></i>
+                          <h3 className="text-lg font-bold text-emerald-400">Chúc Mừng! Khoản Vay Được Phê Duyệt</h3>
+                          <p className="text-xs text-slate-300">Mã hồ sơ: <span className="font-mono font-bold text-white">{approvalResult.id}</span> | Điểm CIC: <span className="text-emerald-400 font-bold">{approvalResult.score}/850</span></p>
+                          <div className="bg-slate-900 p-3 rounded-xl border border-slate-700 text-left text-xs space-y-1 my-2">
+                            <div className="flex justify-between"><span className="text-slate-400">Hạn mức duyệt:</span><span className="text-emerald-400 font-bold">{formatVND(approvalResult.amount)}</span></div>
+                            <div className="flex justify-between"><span className="text-slate-400">Trả hàng tháng từ:</span><span className="text-white font-bold">{formatVND(approvalResult.monthlyPayment)}</span></div>
+                          </div>
+                          <label className="flex items-center gap-2 text-xs text-left cursor-pointer">
+                            <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)} className="accent-emerald-500" />
+                            <span>Tôi đã đọc và đồng ý với điều khoản hợp đồng tín dụng.</span>
+                          </label>
+                          <button disabled={!agreedToTerms} onClick={() => alert("Yêu cầu giải ngân đã được gửi thành công!")} className="w-full bg-emerald-500 disabled:opacity-40 text-slate-950 font-bold py-3 rounded-xl text-sm shadow-lg shadow-emerald-500/20">XÁC NHẬN NHẬN TIỀN GIẢI NGÂN</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
 
             {activeTab === 'dashboard' && (
               <div className="space-y-4">
-                <h2 className="text-base font-bold text-white">Quản Lý Khoản Vay Cá Nhân</h2>
-                {applications.map(app => (
-                  <div key={app.id} className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center text-xs">
-                    <div>
-                      <p className="font-mono text-slate-400">{app.id} - {app.fullName}</p>
-                      <p className="text-emerald-400 font-bold text-base mt-0.5">{formatVND(app.amount)}</p>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="layout-dashboard" className="w-5 h-5 text-emerald-400"></i> Quản Lý Khoản Vay Cá Nhân</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {applications.map(app => (
+                    <div key={app.id} className="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 space-y-2">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="font-mono font-bold text-slate-400">{app.id}</span>
+                        <span className="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-bold">Đã Giải Ngân</span>
+                      </div>
+                      <p className="text-lg font-extrabold text-emerald-400">{formatVND(app.amount)}</p>
+                      <button onClick={() => alert(`Mở mã VietQR thanh toán cho khoản ${app.id}`)} className="w-full bg-emerald-500 text-slate-950 font-bold py-2 rounded-xl text-xs">Thanh Toán Kỳ Này</button>
                     </div>
-                    <span className="bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-bold">Đã Phê Duyệt</span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
 
             {activeTab === 'admin' && (
               <div className="space-y-4">
-                <h2 className="text-base font-bold text-white">Bảng Báo Cáo Thẩm Định Admin</h2>
-                <div className="grid grid-cols-2 gap-3 text-center">
-                  <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
-                    <p className="text-xs text-slate-400">Duyệt tự động</p>
-                    <p className="text-lg font-bold text-emerald-400">82%</p>
-                  </div>
-                  <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
-                    <p className="text-xs text-slate-400">Tổng hồ sơ</p>
-                    <p className="text-lg font-bold text-white">142</p>
-                  </div>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="shield-check" className="w-5 h-5 text-emerald-400"></i> Bảng Điều Hành Admin</h2>
+                <div className="grid grid-cols-2 gap-3 text-center text-xs">
+                  <div className="bg-slate-800 p-3 rounded-xl border border-slate-700"><p className="text-slate-400">Duyệt tự động</p><p className="text-xl font-bold text-emerald-400 mt-1">78.5%</p></div>
+                  <div className="bg-slate-800 p-3 rounded-xl border border-slate-700"><p className="text-slate-400">Giải ngân hôm nay</p><p className="text-xl font-bold text-teal-300 mt-1">4.2 Tỷ</p></div>
                 </div>
               </div>
             )}
