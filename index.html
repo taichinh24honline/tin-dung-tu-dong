@@ -155,18 +155,20 @@
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-3 text-xs">
                     <span className="font-semibold text-red-600 uppercase tracking-wider">
-                      Bước {currentStep} / 4: {
+                      {currentStep === 4 ? 'BƯỚC CUỐI: TẢI ỨNG DỤNG' : `Bước ${currentStep} / 3:`} {
                         currentStep === 1 ? 'Chọn hạn mức & Thông tin cá nhân' :
                         currentStep === 2 ? 'Việc làm & Tài khoản thụ hưởng' :
-                        currentStep === 3 ? 'Xác thực định danh trực tuyến (eKYC)' : 'Hoàn tất hồ sơ'
+                        currentStep === 3 ? 'Xác thực định danh trực tuyến (eKYC)' : 'Yêu cầu cài đặt ứng dụng'
                       }
                     </span>
-                    <span className="text-slate-500 font-medium">{currentStep * 25}% Hoàn thành</span>
+                    <span className="text-slate-500 font-medium">
+                      {currentStep === 4 ? 'Cần cài app để giải ngân' : `${Math.round((currentStep / 3) * 100)}% Hoàn thành`}
+                    </span>
                   </div>
                   <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                     <div 
                       className="bg-gradient-to-r from-red-600 to-rose-500 h-full transition-all duration-300"
-                      style={{ width: `${currentStep * 25}%` }}
+                      style={{ width: `${currentStep === 4 ? '90%' : (currentStep / 3) * 100 + '%'}` }}
                     ></div>
                   </div>
                 </div>
@@ -521,7 +523,7 @@
                   </div>
                 )}
 
-                {/* STEP 4 */}
+                {/* STEP 4: YÊU CẦU TẢI APP (CHƯA PHẢI 100% HOÀN THÀNH) */}
                 {currentStep === 4 && approvalResult && (
                   <div className="py-2">
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center space-y-5 shadow-[0_15px_35px_rgba(0,0,0,0.08)] transform transition-all relative overflow-hidden">
