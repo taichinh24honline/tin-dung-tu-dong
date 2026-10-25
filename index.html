@@ -43,6 +43,10 @@
         bankName: 'MBBank'
       });
 
+      // Real Photo Upload State
+      const [cccdFront, setCccdFront] = useState(null);
+      const [cccdBack, setCccdBack] = useState(null);
+
       // Simulation State
       const [isAnalyzing, setIsAnalyzing] = useState(false);
       const [analysisProgress, setAnalysisProgress] = useState(0);
@@ -54,11 +58,26 @@
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [currentStep, isAnalyzing, approvalResult]);
+      }, [currentStep, isAnalyzing, approvalResult, cccdFront, cccdBack]);
 
       const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+      };
+
+      const handleFileUpload = (e, side) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            if (side === 'front') {
+              setCccdFront(reader.result);
+            } else {
+              setCccdBack(reader.result);
+            }
+          };
+          reader.readAsDataURL(file);
+        }
       };
 
       const formatVND = (num) => {
@@ -490,7 +509,6 @@
                               <option value="VietABank">Viet A Bank - Việt Á</option>
                               <option value="kienlongbank">Kienlongbank - Kiên Long</option>
                               <option value="BVBank">BVBank - Bản Việt</option>
-                              <option value="Eximbank">Eximbank</option>
                             </optgroup>
                             <optgroup label="Ngân hàng số & Tài chính khác">
                               <option value="CakeByVPBank">Cake by VPBank</option>
@@ -535,37 +553,73 @@
                     </div>
                   )}
 
-                  {/* STEP 3 */}
+                  {/* STEP 3 - TẢI ẢNH THẬT CCCD */}
                   {currentStep === 3 && (
                     <div className="space-y-4">
                       <h3 className="text-base font-bold text-white flex items-center gap-2">
                         <i data-lucide="credit-card" className="w-4 h-4 text-emerald-400"></i> Xác Thực Hồ Sơ AI (eKYC)
                       </h3>
-                      <p className="text-xs text-slate-400">Tải lên CCCD mặt trước và mặt sau để hệ thống định danh tự động.</p>
+                      <p className="text-xs text-slate-400">
+                        Vui lòng tải lên ảnh chụp thực tế CCCD mặt trước và mặt sau để AI trích xuất thông tin.
+                      </p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                        <div className="border-2 border-dashed border-slate-700 rounded-xl p-4 text-center bg-slate-900/50">
-                          <i data-lucide="file-check" className="w-8 h-8 text-emerald-400 mx-auto mb-2"></i>
-                          <p className="text-xs font-semibold text-slate-200">CCCD Mặt Trước</p>
-                          <span className="text-[10px] text-emerald-400 mt-2 inline-block bg-emerald-500/10 px-2 py-1 rounded">Đã tải lên mô phỏng</span>
+                        {/* CCCD Mặt Trước */}
+                        <div className="border-2 border-dashed border-slate-700 hover:border-emerald-500/50 rounded-xl p-4 text-center bg-slate-900/50 transition-all relative overflow-hidden">
+                          {cccdFront ? (
+                            <div className="space-y-2">
+                              <img src={cccdFront} alt="CCCD Mặt trước" className="w-full h-32 object-cover rounded-lg border border-emerald-500/40" />
+                              <label className="text-[11px] text-emerald-400 font-semibold cursor-pointer block hover:underline">
+                                Đổi ảnh khác
+                                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'front')} className="hidden" />
+                              </label>
+                            </div>
+                          ) : (
+                            <label className="cursor-pointer block py-3">
+                              <i data-lucide="upload-cloud" className="w-8 h-8 text-emerald-400 mx-auto mb-2"></i>
+                              <p className="text-xs font-semibold text-slate-200">CCCD Mặt Trước</p>
+                              <span className="text-[10px] text-slate-400 block mt-1">Bấm để chọn / chụp ảnh</span>
+                              <span className="mt-3 inline-block bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs px-3 py-1.5 rounded-lg border border-slate-700 font-medium">
+                                Chọn / Chụp ảnh
+                              </span>
+                              <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'front')} className="hidden" />
+                            </label>
+                          )}
                         </div>
 
-                        <div className="border-2 border-dashed border-slate-700 rounded-xl p-4 text-center bg-slate-900/50">
-                          <i data-lucide="file-check" className="w-8 h-8 text-teal-400 mx-auto mb-2"></i>
-                          <p className="text-xs font-semibold text-slate-200">CCCD Mặt Sau</p>
-                          <span className="text-[10px] text-teal-400 mt-2 inline-block bg-teal-500/10 px-2 py-1 rounded">Đã tải lên mô phỏng</span>
+                        {/* CCCD Mặt Sau */}
+                        <div className="border-2 border-dashed border-slate-700 hover:border-emerald-500/50 rounded-xl p-4 text-center bg-slate-900/50 transition-all relative overflow-hidden">
+                          {cccdBack ? (
+                            <div className="space-y-2">
+                              <img src={cccdBack} alt="CCCD Mặt sau" className="w-full h-32 object-cover rounded-lg border border-emerald-500/40" />
+                              <label className="text-[11px] text-emerald-400 font-semibold cursor-pointer block hover:underline">
+                                Đổi ảnh khác
+                                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'back')} className="hidden" />
+                              </label>
+                            </div>
+                          ) : (
+                            <label className="cursor-pointer block py-3">
+                              <i data-lucide="upload-cloud" className="w-8 h-8 text-teal-400 mx-auto mb-2"></i>
+                              <p className="text-xs font-semibold text-slate-200">CCCD Mặt Sau</p>
+                              <span className="text-[10px] text-slate-400 block mt-1">Bấm để chọn / chụp ảnh</span>
+                              <span className="mt-3 inline-block bg-slate-800 hover:bg-slate-700 text-teal-400 text-xs px-3 py-1.5 rounded-lg border border-slate-700 font-medium">
+                                Chọn / Chụp ảnh
+                              </span>
+                              <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'back')} className="hidden" />
+                            </label>
+                          )}
                         </div>
                       </div>
 
                       <div className="bg-emerald-950/20 border border-emerald-500/30 rounded-xl p-4 mt-4 text-xs text-slate-300">
-                        Hệ thống sẽ tra cứu tự động điểm tín dụng CIC để cấp hạn mức từ <strong>30.000.000đ đến 100.000.000đ</strong>.
+                        Hệ thống sẽ tra cứu tự động điểm tín dụng CIC dựa trên ảnh chụp CCCD để cấp hạn mức từ <strong>30.000.000đ đến 100.000.000đ</strong>.
                       </div>
 
                       {isAnalyzing ? (
                         <div className="py-6 text-center space-y-3">
                           <i data-lucide="refresh-cw" className="w-8 h-8 text-emerald-400 animate-spin mx-auto"></i>
                           <p className="text-sm font-semibold text-emerald-400">
-                            Hệ thống AI đang chấm điểm tín dụng... {analysisProgress}%
+                            Hệ thống AI đang phân tích ảnh CCCD & chấm điểm tín dụng... {analysisProgress}%
                           </p>
                         </div>
                       ) : (
@@ -577,8 +631,9 @@
                             Quay lại
                           </button>
                           <button
+                            disabled={!cccdFront || !cccdBack}
                             onClick={triggerAutoApproval}
-                            className="bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-bold px-7 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-emerald-500/25"
+                            className="bg-gradient-to-r from-emerald-500 to-teal-400 disabled:opacity-40 text-slate-950 font-bold px-7 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-lg shadow-emerald-500/25"
                           >
                             <i data-lucide="zap" className="w-4 h-4"></i> Thẩm Định AI Ngay
                           </button>
