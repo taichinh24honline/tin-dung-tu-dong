@@ -520,40 +520,47 @@
                   </div>
                 )}
 
-                {/* STEP 4 */}
+                {/* STEP 4 - HIỆU ỨNG 3D NỔI BẬT */}
                 {currentStep === 4 && approvalResult && (
-                  <div className="space-y-5">
-                    <div className="bg-gradient-to-b from-red-50 to-white border border-red-200 rounded-2xl p-6 text-center space-y-4 shadow-sm">
-                      <div className="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto border border-red-200 shadow-sm">
-                        <i data-lucide="smartphone" className="w-7 h-7"></i>
+                  <div className="py-2">
+                    <div className="bg-white border-2 border-red-200 rounded-3xl p-6 text-center space-y-5 shadow-[0_20px_50px_rgba(220,38,38,0.15)] transform transition-all relative overflow-hidden">
+                      {/* Hiệu ứng ánh sáng 3D góc trên */}
+                      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-red-500 via-rose-500 to-red-600"></div>
+
+                      <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-rose-600 text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-red-500/40 transform -rotate-3 hover:rotate-0 transition-transform">
+                        <i data-lucide="smartphone" className="w-8 h-8"></i>
                       </div>
                       
                       <div>
-                        <span className="text-xs uppercase tracking-wider text-red-600 font-bold">Yêu cầu hoàn tất định danh số</span>
-                        <h3 className="text-xl font-extrabold text-slate-900 mt-1">
+                        <span className="text-xs uppercase tracking-widest text-red-600 font-extrabold bg-red-50 px-3 py-1 rounded-full border border-red-200">
+                          Yêu cầu hoàn tất định danh số
+                        </span>
+                        <h3 className="text-2xl font-black text-slate-900 mt-3 leading-tight">
                           Vui Lòng Tải Ứng Dụng Tikluy Để Hoàn Tất Hồ Sơ!
                         </h3>
                       </div>
 
                       <p className="text-xs text-slate-600 leading-relaxed px-2">
-                        Hồ sơ đề xuất vay của Quý khách (<strong className="text-red-600">{formatVND(approvalResult.amount)}</strong>) đã được ghi nhận trên hệ thống. Để tiếp tục quy trình xét duyệt và giải ngân tự động, xin vui lòng cài đặt ứng dụng <strong className="text-slate-900">Tikluy</strong>, tiến hành <strong className="text-slate-900">Đăng ký tài khoản mới</strong> và nhập mã giới thiệu nhân viên dưới đây.
+                        Hồ sơ đề xuất vay của Quý khách (<strong className="text-red-600 font-bold">{formatVND(approvalResult.amount)}</strong>) đã được ghi nhận trên hệ thống. Để tiếp tục quy trình xét duyệt và giải ngân tự động, xin vui lòng cài đặt ứng dụng <strong className="text-slate-900 font-bold">Tikluy</strong>, tiến hành <strong className="text-slate-900 font-bold">nhập lại thông tin</strong> và sử dụng mã giới thiệu bên dưới.
                       </p>
 
-                      {/* Hộp mã giới thiệu nổi bật */}
-                      <div className="bg-white border border-red-200 p-4 rounded-xl space-y-1.5 shadow-xs">
-                        <p className="text-xs text-slate-500 uppercase font-semibold">Mã giới thiệu nhân viên hỗ trợ ưu tiên:</p>
-                        <div className="text-2xl font-black text-red-600 tracking-wider font-mono">
+                      {/* Hộp mã giới thiệu nổi bật 3D */}
+                      <div className="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-5 rounded-2xl space-y-2 shadow-xl border border-slate-800 relative">
+                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold uppercase px-3 py-0.5 rounded-full shadow-sm">
+                          Mã ưu tiên độc quyền
+                        </div>
+                        <p className="text-xs text-slate-400 uppercase font-semibold pt-1">Mã giới thiệu nhân viên hỗ trợ:</p>
+                        <div className="text-3xl font-black text-red-500 tracking-widest font-mono py-1 drop-shadow-md">
                           0878665588
                         </div>
-                        <p className="text-[11px] text-red-700">*(Sử dụng mã này khi đăng ký tài khoản mới trên ứng dụng Tikluy để được ưu tiên xử lý hồ sơ nhanh chóng)*</p>
                       </div>
 
-                      {/* Nút tải app iOS và Android */}
+                      {/* Nút tải app iOS và Android chuẩn 3D */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                         <a 
                           href="https://apps.apple.com/vn/app/tikluy/id6504506939" 
                           target="_blank" 
-                          className="bg-slate-900 hover:bg-slate-800 text-white p-3.5 rounded-xl flex items-center justify-center gap-3 transition-all group shadow-sm"
+                          className="bg-slate-900 hover:bg-slate-800 text-white p-4 rounded-2xl flex items-center justify-center gap-3 transition-all transform hover:-translate-y-0.5 shadow-md group"
                         >
                           <i data-lucide="apple" className="w-6 h-6 text-white group-hover:scale-110 transition-transform"></i>
                           <div className="text-left">
@@ -565,7 +572,7 @@
                         <a 
                           href="https://play.google.com/store/apps/details?id=com.tikluy" 
                           target="_blank" 
-                          className="bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 p-3.5 rounded-xl flex items-center justify-center gap-3 transition-all group shadow-sm"
+                          className="bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-200 p-4 rounded-2xl flex items-center justify-center gap-3 transition-all transform hover:-translate-y-0.5 shadow-md group"
                         >
                           <i data-lucide="play" className="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform fill-red-600"></i>
                           <div className="text-left">
@@ -580,7 +587,7 @@
                           onClick={() => {
                             setCurrentStep(1);
                           }}
-                          className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 rounded-xl transition-all border border-slate-200"
+                          className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-3 rounded-xl transition-all border border-slate-200 shadow-xs"
                         >
                           Quay lại trang chủ đăng ký
                         </button>
