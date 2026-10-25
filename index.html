@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinCredit VN - Hỗ Trợ Tín Dụng Duyệt Tự Động</title>
+  <!-- Tailwind CSS & React React-DOM Babel via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function App() {
+      const [activeTab, setActiveTab] = useState('apply');
+      const [currentStep, setCurrentStep] = useState(1);
+      const [loanAmount, setLoanAmount] = useState(50000000);
+      const [loanTerm, setLoanTerm] = useState(12);
+      const [interestRate, setInterestRate] = useState(1.1);
+      const [calcType, setCalcType] = useState('declining');
+
+      const [formData, setFormData] = useState({
+        fullName: '', idCard: '', phone: '', dob: '', email: '',
+        jobType: 'employee', monthlyIncome: '15000000', companyName: '',
+        address: '', bankAccount: '', bankName: 'MBBank'
+      });
+
+      const [isAnalyzing, setIsAnalyzing] = useState(false);
+      const [analysisProgress, setAnalysisProgress] = useState(0);
+      const [approvalResult, setApprovalResult] = useState(null);
+      const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+      const [applications, setApplications] = useState([
+        { id: 'CR-88921', fullName: 'Trần Văn Nam', phone: '0981***456', amount: 60000000, term: 12, score: 742, status: 'approved', date: '2026-10-24' },
+        { id: 'CR-88922', fullName: 'Lê Thị Thu', phone: '0912***888', amount: 40000000, term: 6, score: 610, status: 'pending_review', date: '2026-10-25' }
+      ]);
+
+      const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+      };
+
+      const formatVND = (num) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
+
+      const calculateRepayment = () => {
+        const P = Number(loanAmount);
+        const N = Number(loanTerm);
+        const monthlyRate = (interestRate / 100);
+        const monthlyPrincipal = P / N;
+
+        if (calcType === 'flat') {
+          const monthlyInterest = P * monthlyRate;
+          const totalMonthly = monthlyPrincipal + monthlyInterest;
+          return { firstMonth: totalMonthly, totalInterest: monthlyInterest * N, totalPayment: totalMonthly * N };
+        } else {
+          const firstMonthInterest = P * monthlyRate;
+          let totalInterest = 0;
+          let remaining = P;
+          for (let i = 0; i < N; i++) {
+            totalInterest += remaining * monthlyRate;
+            remaining -= monthlyPrincipal;
+          }
+          return { firstMonth: monthlyPrincipal + firstMonthInterest, totalInterest, totalPayment: P + totalInterest };
+        }
+      };
+
+      const calcDetails = calculateRepayment();
+
+      const triggerAutoApproval = () => {
+        setIsAnalyzing(true);
+        setAnalysisProgress(0);
+        const interval = setInterval(() => {
+          setAnalysisProgress(prev => {
+            if (prev >= 100) {
+              clearInterval(interval);
+              setIsAnalyzing(false);
+              const income = Number(formData.monthlyIncome);
+              let baseScore = income >= 20000000 ? 770 : income >= 12000000 ? 720 : 670;
+              if (formData.idCard.length === 12) baseScore += 30;
+              const finalScore = Math.min(850, baseScore);
+              const approved = finalScore >= 620;
+
+              const resultObj = {
+                id: `CR-${Math.floor(10000 + Math.random() * 90000)}`,
+                fullName: formData.fullName || 'Khách hàng',
+                amount: Number(loanAmount),
+                term: Number(loanTerm),
+                score: finalScore,
+                status: approved ? 'approved' : 'rejected',
+                date: new Date().toISOString().split('T')[0],
+                monthlyPayment: calcDetails.firstMonth
+              };
+
+              setApprovalResult(resultObj);
+              if (approved) setApplications(prev => [resultObj, ...prev]);
+              setCurrentStep(4);
+              return 100;
+            }
+            return prev + 20;
+          });
+        }, 250);
+      };
+
+      return (
+        <div className="pb-12">
+          {/* Header */}
+          <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 h-16 flex items-center justify-between max-w-6xl mx-auto">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg">FC</div>
+              <div>
+                <h1 className="font-bold text-lg leading-tight bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">FinCredit VN</h1>
+                <p className="text-[10px] text-slate-400">Duyệt Tín Dụng Tự Động 30M - 100M</p>
+              </div>
+            </div>
+            <nav className="flex gap-1 bg-slate-800 p-1 rounded-xl text-xs">
+              <button onClick={() => setActiveTab('apply')} className={`px-2.5 py-1.5 rounded-lg ${activeTab === 'apply' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300'}`}>Đăng Ký</button>
+              <button onClick={() => setActiveTab('dashboard')} className={`px-2.5 py-1.5 rounded-lg ${activeTab === 'dashboard' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300'}`}>Khoản Vay</button>
+              <button onClick={() => setActiveTab('admin')} className={`px-2.5 py-1.5 rounded-lg ${activeTab === 'admin' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300'}`}>Quản Lý</button>
+            </nav>
+          </header>
+
+          <main className="max-w-6xl mx-auto px-4 pt-6">
+            {activeTab === 'apply' && (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Calculator */}
+                <div className="lg:col-span-5 bg-slate-800/90 border border-slate-700 rounded-2xl p-5 space-y-4">
+                  <h3 className="font-bold text-emerald-400 text-sm">Công Cụ Tính Khoản Vay</h3>
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-slate-400">Số tiền vay:</span>
+                      <span className="text-emerald-400 font-bold text-base">{formatVND(loanAmount)}</span>
+                    </div>
+                    <input type="range" min="30000000" max="100000000" step="5000000" value={loanAmount} onChange={e => setLoanAmount(Number(e.target.value))} className="w-full accent-emerald-500 h-2 bg-slate-700 rounded-lg cursor-pointer" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-400 block mb-1">Thời hạn vay</label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[6, 12, 18, 24].map(t => (
+                        <button key={t} onClick={() => setLoanTerm(t)} className={`py-1.5 text-xs rounded-xl border ${loanTerm === t ? 'bg-emerald-500 text-slate-950 font-bold border-emerald-400' : 'bg-slate-900 border-slate-700 text-slate-300'}`}>{t}T</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-700 space-y-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Gốc + Lãi tháng đầu:</span>
+                      <span className="font-bold text-white">{formatVND(calcDetails.firstMonth)}</span>
+                    </div>
+                    <div className="flex justify-between pt-1 border-t border-slate-800">
+                      <span className="text-slate-400">Tổng thanh toán:</span>
+                      <span className="text-emerald-400 font-bold">{formatVND(calcDetails.totalPayment)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form Steps */}
+                <div className="lg:col-span-7 bg-slate-800/90 border border-slate-700 rounded-2xl p-5">
+                  <div className="mb-4">
+                    <span className="text-xs text-emerald-400 font-bold">Bước {currentStep} / 4</span>
+                    <div className="w-full bg-slate-700 h-1.5 rounded-full mt-1 overflow-hidden">
+                      <div className="bg-emerald-500 h-full transition-all duration-300" style={{ width: `${currentStep * 25}%` }}></div>
+                    </div>
+                  </div>
+
+                  {currentStep === 1 && (
+                    <div className="space-y-3">
+                      <h3 className="font-bold text-white text-sm">1. Thông tin cá nhân</h3>
+                      <input type="text" name="fullName" placeholder="Họ và tên trên CCCD" value={formData.fullName} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm" />
+                      <input type="text" name="idCard" placeholder="Số CCCD (12 số)" maxLength={12} value={formData.idCard} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm" />
+                      <input type="tel" name="phone" placeholder="Số điện thoại" value={formData.phone} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm" />
+                      <button disabled={!formData.fullName || !formData.idCard || !formData.phone} onClick={() => setCurrentStep(2)} className="w-full bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold py-2.5 rounded-xl text-sm mt-2">Tiếp Theo</button>
+                    </div>
+                  )}
+
+                  {currentStep === 2 && (
+                    <div className="space-y-3">
+                      <h3 className="font-bold text-white text-sm">2. Nghề nghiệp & Ngân hàng</h3>
+                      <select name="monthlyIncome" value={formData.monthlyIncome} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm">
+                        <option value="8000000">Dưới 10M / tháng</option>
+                        <option value="15000000">10M - 20M / tháng</option>
+                        <option value="25000000">Trên 20M / tháng</option>
+                      </select>
+                      <input type="text" name="bankAccount" placeholder="Số tài khoản nhận tiền" value={formData.bankAccount} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm" />
+                      <div className="flex gap-2">
+                        <button onClick={() => setCurrentStep(1)} className="w-1/3 bg-slate-700 py-2.5 rounded-xl text-sm">Trở lại</button>
+                        <button disabled={!formData.bankAccount} onClick={() => setCurrentStep(3)} className="w-2/3 bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold py-2.5 rounded-xl text-sm">Tiếp Theo</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {currentStep === 3 && (
+                    <div className="space-y-4 text-center">
+                      <h3 className="font-bold text-white text-sm text-left">3. Xác thực & Thẩm định AI</h3>
+                      <p className="text-xs text-slate-400 text-left">Hệ thống sẽ tra cứu tự động điểm uy tín CIC dựa trên số CCCD.</p>
+                      {isAnalyzing ? (
+                        <div className="py-8 space-y-2">
+                          <p className="text-emerald-400 font-bold text-base animate-pulse">Đang thẩm định AI... {analysisProgress}%</p>
+                          <p className="text-xs text-slate-400">Vui lòng chờ trong giây lát</p>
+                        </div>
+                      ) : (
+                        <button onClick={triggerAutoApproval} className="w-full bg-emerald-500 text-slate-950 font-bold py-3 rounded-xl text-sm shadow-lg shadow-emerald-500/20">BẮT ĐẦU THẨM ĐỊNH TỰ ĐỘNG</button>
+                      )}
+                    </div>
+                  )}
+
+                  {currentStep === 4 && approvalResult && (
+                    <div className="space-y-4 text-center">
+                      <div className="p-4 bg-emerald-950/40 border border-emerald-500/40 rounded-xl space-y-2">
+                        <h3 className="text-lg font-bold text-emerald-400">KHOẢN VAY ĐƯỢC PHÊ DUYỆT!</h3>
+                        <p className="text-xs text-slate-300">Điểm CIC: <strong className="text-emerald-400">{approvalResult.score}/850</strong></p>
+                        <p className="text-2xl font-extrabold text-white">{formatVND(approvalResult.amount)}</p>
+                      </div>
+                      <label className="flex items-center gap-2 text-xs text-left cursor-pointer">
+                        <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)} className="accent-emerald-500" />
+                        <span>Tôi đồng ý ký hợp đồng tín dụng điện tử.</span>
+                      </label>
+                      <button disabled={!agreedToTerms} onClick={() => alert("Yêu cầu giải ngân đã gửi tới ngân hàng thành công!")} className="w-full bg-emerald-500 disabled:opacity-50 text-slate-950 font-bold py-3 rounded-xl text-sm">NHẬN TIỀN GIẢI NGÂN</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'dashboard' && (
+              <div className="space-y-4">
+                <h2 className="text-base font-bold text-white">Quản Lý Khoản Vay Cá Nhân</h2>
+                {applications.map(app => (
+                  <div key={app.id} className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center text-xs">
+                    <div>
+                      <p className="font-mono text-slate-400">{app.id} - {app.fullName}</p>
+                      <p className="text-emerald-400 font-bold text-base mt-0.5">{formatVND(app.amount)}</p>
+                    </div>
+                    <span className="bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-bold">Đã Phê Duyệt</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'admin' && (
+              <div className="space-y-4">
+                <h2 className="text-base font-bold text-white">Bảng Báo Cáo Thẩm Định Admin</h2>
+                <div className="grid grid-cols-2 gap-3 text-center">
+                  <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
+                    <p className="text-xs text-slate-400">Duyệt tự động</p>
+                    <p className="text-lg font-bold text-emerald-400">82%</p>
+                  </div>
+                  <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
+                    <p className="text-xs text-slate-400">Tổng hồ sơ</p>
+                    <p className="text-lg font-bold text-white">142</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
