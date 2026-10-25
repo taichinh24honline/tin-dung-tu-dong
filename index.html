@@ -58,7 +58,7 @@
         if (window.lucide) {
           window.lucide.createIcons();
         }
-      }, [currentStep, isAnalyzing, approvalResult, cccdFront, cccdBack, isCopied]);
+      }, [currentStep, isAnalyzing, approvalResult, cccdFront, cccdBack, isCopied, loanAmount, loanTerm]);
 
       const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -83,6 +83,23 @@
       const formatVND = (num) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
       };
+
+      // Tính toán khoản trả hàng tháng với lãi suất 18%/năm
+      const calculateMonthlyPayment = () => {
+        const principalPerMonth = loanAmount / loanTerm;
+        // Lãi suất hàng tháng = 18% / 12 = 1.5%
+        const monthlyInterestRate = 0.18 / 12;
+        // Lãi tính trên dư nợ gốc bình quân hoặc tháng đầu tiên cho khách dễ hình dung
+        const firstMonthInterest = loanAmount * monthlyInterestRate;
+        const totalFirstMonth = principalPerMonth + firstMonthInterest;
+        return {
+          principal: principalPerMonth,
+          interest: firstMonthInterest,
+          total: totalFirstMonth
+        };
+      };
+
+      const monthlyData = calculateMonthlyPayment();
 
       const handleCopyCode = () => {
         navigator.clipboard.writeText('0878665588');
@@ -161,7 +178,7 @@
                       <div className="space-y-3">
                         <div className="flex justify-between items-center text-sm">
                           <span className="text-slate-600 font-medium">Số tiền đề xuất vay:</span>
-                          <span className="text-red-600 font-extrabold text-lg">
+                          <span className="text-red-600 font-extrabold text-xl">
                             {formatVND(loanAmount)}
                           </span>
                         </div>
@@ -199,6 +216,33 @@
                           ))}
                         </div>
                       </div>
+
+                      {/* BẢNG TÍNH LÃI VÀ SỐ TIỀN TRẢ HÀNG THÁNG (LÃI SUẤT 18%/NĂM) */}
+                      <div className="bg-white border border-red-100 rounded-xl p-4 space-y-2.5 shadow-xs">
+                        <div className="flex justify-between items-center text-xs text-slate-500 border-b border-slate-100 pb-2">
+                          <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+                            <i data-lucide="calculator" className="w-4 h-4 text-red-600"></i> Dự tính thanh toán (Lãi suất: 18%/năm):
+                          </span>
+                          <span className="text-red-600 font-bold">{loanTerm} Tháng</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                          <div className="bg-slate-50 p-2.5 rounded-lg">
+                            <span className="text-slate-500 block text-[11px]">Tiền gốc hàng tháng:</span>
+                            <span className="font-bold text-slate-800 text-sm">{formatVND(monthlyData.principal)}</span>
+                          </div>
+                          <div className="bg-slate-50 p-2.5 rounded-lg">
+                            <span className="text-slate-500 block text-[11px]">Tiền lãi dự tính (Tháng đầu):</span>
+                            <span className="font-bold text-slate-800 text-sm">~ {formatVND(monthlyData.interest)}</span>
+                          </div>
+                        </div>
+
+                        <div className="bg-red-50/80 border border-red-200/60 p-3 rounded-xl flex justify-between items-center mt-1">
+                          <span className="text-xs font-bold text-red-900">Tổng trả ước tính tháng đầu:</span>
+                          <span className="text-base font-extrabold text-red-600">{formatVND(monthlyData.total)}</span>
+                        </div>
+                      </div>
+
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
