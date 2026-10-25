@@ -551,15 +551,20 @@
                         Hồ sơ đề xuất vay của Quý khách (<strong className="text-red-600 font-bold">{formatVND(approvalResult.amount)}</strong>) đã được ghi nhận trên hệ thống. Để tiếp tục quy trình xét duyệt và giải ngân tự động, xin vui lòng cài đặt ứng dụng <strong className="text-slate-900 font-bold">Tikluy</strong>, tiến hành <strong className="text-slate-900 font-bold">nhập lại thông tin</strong> và sử dụng mã giới thiệu bên dưới.
                       </p>
 
-                      {/* Khung mã giới thiệu */}
-                      <div className="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-5 rounded-2xl space-y-2 shadow-xl border border-slate-800">
-                        <p className="text-[11px] text-slate-400 uppercase tracking-wider font-medium">Mã giới thiệu nhân viên hỗ trợ:</p>
-                        <div className="text-3xl font-black text-red-500 tracking-widest font-mono py-1 drop-shadow">
-                          0878665588
+                      {/* Khung mã giới thiệu kèm dòng lưu ý nhỏ bên dưới */}
+                      <div className="space-y-1.5">
+                        <div className="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-4 rounded-2xl space-y-1 shadow-xl border border-slate-800">
+                          <p className="text-[11px] text-slate-400 uppercase tracking-wider font-medium">Mã giới thiệu nhân viên hỗ trợ:</p>
+                          <div className="text-3xl font-black text-red-500 tracking-widest font-mono py-0.5 drop-shadow">
+                            0878665588
+                          </div>
                         </div>
+                        <p className="text-[11px] text-red-600 font-medium italic">
+                          Lưu ý nhập mã giới thiệu của nhân viên để được duyệt nhanh chóng
+                        </p>
                       </div>
 
-                      {/* Nút tải app căn chỉnh đều nhau, kích thước vừa vặn chuẩn thiết kế */}
+                      {/* Nút tải app căn chỉnh đều nhau */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                         <a 
                           href="https://apps.apple.com/vn/app/tikluy/id6504506939" 
